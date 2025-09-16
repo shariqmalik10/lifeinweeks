@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Editor, Tldraw } from "tldraw";
+import 'tldraw/tldraw.css'
 
 interface TldrawCanvasProps {
   canvasId: string;
@@ -24,7 +25,6 @@ export default function TldrawCanvas({ canvasId }: TldrawCanvasProps) {
       const items = localStorage.getItem(`canvas-${canvasId}`)
       const data = items ? JSON.parse(items) : {};
       return data;
-      // You can now use 'data' as needed
     } catch (error) {
       console.log(error);
       return {};
