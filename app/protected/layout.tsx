@@ -21,7 +21,7 @@ export default function ProtectedLayout({
           </div>
         </div>
       </nav>
-      <div className="flex-1 max-w-5xl mx-auto p-5 w-full">{children}</div>
+      <div className="flex-1 relative w-full">{children}</div>
     </main>
   );
 }
