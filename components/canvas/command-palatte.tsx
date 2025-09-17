@@ -3,8 +3,11 @@
 import { useState, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { useTLDrawEditor } from '@/app/hooks/useTLDrawEditor'
-import { createShapeId, TLShape, TLShapeId, toRichText } from 'tldraw'
-import { useCompletion } from '@ai-sdk/react';
+import { createShapeId, TLGeoShape, TLShapeId, toRichText } from 'tldraw'
+import { useCompletion } from '@ai-sdk/react'
+
+const BASE_W = 1200
+const BASE_H = 100
 
 export function CommandPalette() {
   const [isOpen, setIsOpen] = useState(false)
@@ -15,29 +18,59 @@ export function CommandPalette() {
 
   const { complete, completion, isLoading } = useCompletion({
     api: '/api/prompt',
-
-    onFinish: (initialPrompt, completion) => {
-      if (!currentShapeRef.current && editor) {
-        const shapeId = createShapeId()
-        const point = editor.inputs.currentPagePoint || editor.getViewportScreenCenter()
-
-        editor.createShape({
-          id: shapeId,
-          type: 'note',
-          x: point.x - 200,
-          y: point.y - 100,
-          props: {
-            richText: toRichText(completion),
-            color: 'blue',
-          }
-        })
-      }
-      currentShapeRef.current = null
-    },
+    onFinish: () => {
+      currentShapeRef.current = null;
+    }
   })
 
-  console.log("completin", completion)
+  useEffect(() => {
+    if (!editor || !isLoading) return
+    if (currentShapeRef.current) return
 
+    const shapeId = createShapeId()
+    const point = editor.inputs.currentPagePoint || editor.getViewportScreenCenter()
+
+    editor.createShapes<TLGeoShape>([
+      {
+        id: shapeId,
+        type: 'geo',
+        x: point.x,
+        y: point.y,
+        props: {
+          geo: 'rectangle',
+          w: BASE_W,
+          h: BASE_H,
+          dash: 'draw',
+          color: 'blue',
+          size: 'm',
+        },
+      },
+    ])
+
+    currentShapeRef.current = shapeId
+  }, [editor, completion])
+
+  useEffect(() => {
+    if (!editor) return
+    const id = currentShapeRef.current
+    if (!id) return
+
+    const text = (completion ?? '').trim()
+    if (text.length === 0) return
+
+    try {
+      editor.updateShape<TLGeoShape>({
+        id,
+        type: 'geo',
+        props: {
+          h: BASE_H,
+          richText: toRichText(text),
+        },
+      })
+    } catch (err) {
+      console.error('Failed to update shape:', err)
+    }
+  }, [editor, completion])
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -55,6 +88,7 @@ export function CommandPalette() {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [isOpen])
 
+  // Autofocus input when palette opens
   useEffect(() => {
     if (isOpen) {
       inputRef.current?.focus()
@@ -63,24 +97,17 @@ export function CommandPalette() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-
     if (!editor || !input || isLoading) return
 
     if (input.startsWith('add ')) {
-      const prompt = input.slice(4).trim() // Remove 'add ' prefix
+      const prompt = input.slice(4).trim()
+      if (!prompt) return
 
-      if (prompt) {
-        setIsOpen(false)
-        setInput('')
+      setIsOpen(false)
+      setInput('')
 
-        await complete(prompt, {
-          body: {
-            messages: [
-              { role: 'user', content: prompt }
-            ]
-          }
-        })
-      }
+      await complete(prompt)
+
     } else {
       console.log('Unknown command:', input)
       setIsOpen(false)
@@ -89,7 +116,6 @@ export function CommandPalette() {
   }
 
   if (!isOpen) return null
-
 
   return createPortal(
     <div className="fixed inset-0 z-[9999] flex items-center justify-center">

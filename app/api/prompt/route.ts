@@ -1,5 +1,5 @@
 
-import { streamText } from 'ai';
+import { generateText, streamText } from 'ai';
 import { createOpenRouter } from '@openrouter/ai-sdk-provider';
 import { NextResponse } from 'next/server';
 
@@ -11,18 +11,15 @@ const openrouter = createOpenRouter({
 export async function POST(req: Request) {
 
   try {
-    const { messages } = await req.json();
-    console.log(messages)
+    const { prompt }: { prompt: string } = await req.json();
 
-    const response = streamText({
-      model: openrouter('gpt-5-mini'),
-      messages,
+    const result = streamText({
+      model: openrouter('gpt-3.5-turbo'),
+      prompt,
     });
 
-    console.log(response)
 
-    await response.consumeStream();
-    return new NextResponse(await response.text);
+    return result.toUIMessageStreamResponse();
   } catch (error) {
     console.error('Error:', error);
     return NextResponse.json(
