@@ -103,17 +103,11 @@ export function CommandPalette() {
       const prompt = input.slice(4).trim()
       if (!prompt) return
 
-      // Close UI immediately; run completion
       setIsOpen(false)
       setInput('')
 
-      // Keep the API contract consistent. Option A: simple prompt.
       await complete(prompt)
 
-      // Option B (if your server expects messages):
-      // await complete('', {
-      //     body: { messages: [{ role: 'user', content: prompt }] },
-      // })
     } else {
       console.log('Unknown command:', input)
       setIsOpen(false)
