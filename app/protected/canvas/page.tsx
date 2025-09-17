@@ -12,7 +12,6 @@ export default function CanvasPage() {
       <Tldraw
         onMount={(editor) => {
           setEditor(editor)
-          console.log('Editor mounted and available globally')
         }}
       />
     </div>

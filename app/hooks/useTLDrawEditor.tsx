@@ -6,5 +6,8 @@ export function useTLDrawEditor() {
   if (context === undefined) {
     throw new Error('useTldrawEditor must be used within a TldrawEditorProvider')
   }
+
+  const { editor: canvasEditor } = context
+
   return context
 }
