@@ -1,5 +1,6 @@
 "use client";
 import { useTLDrawEditor } from '@/app/hooks/useTLDrawEditor';
+import { CommandPalette } from '@/components/canvas/command-palatte';
 import { Tldraw } from 'tldraw';
 import "tldraw/tldraw.css"
 
@@ -14,6 +15,7 @@ export default function CanvasPage() {
           setEditor(editor)
         }}
       />
+      <CommandPalette />
     </div>
   )
 }
