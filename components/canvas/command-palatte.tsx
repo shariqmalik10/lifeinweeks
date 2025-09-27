@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { useTLDrawEditor } from '@/app/hooks/useTLDrawEditor'
 import { createShapeId, TLGeoShape, TLShapeId, toRichText } from 'tldraw'
+import { createMessageNode, linkNodes, updateMessageNodeText } from './nodes'
 import { useCompletion } from '@ai-sdk/react'
 
 const BASE_W = 1200
@@ -15,11 +16,16 @@ export function CommandPalette() {
   const { editor } = useTLDrawEditor()
   const inputRef = useRef<HTMLInputElement>(null)
   const currentShapeRef = useRef<TLShapeId | null>(null)
+  const lastNodeRef = useRef<TLShapeId | null>(null)
 
   const { complete, completion, isLoading } = useCompletion({
     api: '/api/prompt',
     onFinish: () => {
+      console.log('Streaming finished')
       currentShapeRef.current = null;
+    },
+    onError: (error: any) => {
+      console.error('Streaming error:', error)
     }
   })
 
@@ -27,28 +33,14 @@ export function CommandPalette() {
     if (!editor || !isLoading) return
     if (currentShapeRef.current) return
 
-    const shapeId = createShapeId()
-    const point = editor.inputs.currentPagePoint || editor.getViewportScreenCenter()
-
-    editor.createShapes<TLGeoShape>([
-      {
-        id: shapeId,
-        type: 'geo',
-        x: point.x,
-        y: point.y,
-        props: {
-          geo: 'rectangle',
-          w: BASE_W,
-          h: BASE_H,
-          dash: 'draw',
-          color: 'blue',
-          size: 'm',
-        },
-      },
-    ])
-
-    currentShapeRef.current = shapeId
-  }, [editor, completion])
+    console.log('Creating message node for streaming')
+    const nodeId = createMessageNode(editor, { role: 'assistant', text: '', width: BASE_W, height: BASE_H })
+    if (lastNodeRef.current) {
+      linkNodes(editor, lastNodeRef.current, nodeId)
+    }
+    currentShapeRef.current = nodeId
+    lastNodeRef.current = nodeId
+  }, [editor, isLoading])
 
   useEffect(() => {
     if (!editor) return
@@ -58,18 +50,9 @@ export function CommandPalette() {
     const text = (completion ?? '').trim()
     if (text.length === 0) return
 
-    try {
-      editor.updateShape<TLGeoShape>({
-        id,
-        type: 'geo',
-        props: {
-          h: BASE_H,
-          richText: toRichText(text),
-        },
-      })
-    } catch (err) {
-      console.error('Failed to update shape:', err)
-    }
+    console.log('Updating shape with text:', text.substring(0, 50) + '...')
+
+    updateMessageNodeText(editor, id, text, BASE_H)
   }, [editor, completion])
 
   useEffect(() => {
@@ -100,14 +83,89 @@ export function CommandPalette() {
     if (!editor || !input || isLoading) return
 
     if (input.startsWith('add ')) {
-      const prompt = input.slice(4).trim()
+      const commandText = input.slice(4).trim()
+      if (!commandText) return
+
+      // Parse model and prompt
+      let model = 'gpt-3.5-turbo'
+      let prompt = commandText
+
+      // Check if it starts with a model name
+      const modelMap: Record<string, string> = {
+        'deepseek': 'deepseek/deepseek-chat',
+        'deepseek-v3': 'deepseek/deepseek-v3',
+        'deepseek-v31': 'deepseek/deepseek-v3',
+        'gpt4': 'openai/gpt-4',
+        'gpt-4': 'openai/gpt-4',
+        'claude': 'anthropic/claude-3-haiku',
+        'claude3': 'anthropic/claude-3-haiku',
+      }
+
+      const words = commandText.split(' ')
+      const firstWord = words[0].toLowerCase()
+
+      if (modelMap[firstWord]) {
+        model = modelMap[firstWord]
+        prompt = words.slice(1).join(' ')
+      }
+
       if (!prompt) return
 
+      console.log(`Using model: ${model}`)
       setIsOpen(false)
       setInput('')
 
-      await complete(prompt)
+      await complete(prompt, { body: { model } })
 
+    } else if (input.startsWith('chain ')) {
+      const commandText = input.slice(6).trim()
+      if (!commandText) return
+
+      let model = 'gpt-3.5-turbo'
+      let prompt = commandText
+
+      const modelMap: Record<string, string> = {
+        'deepseek': 'deepseek/deepseek-chat',
+        'deepseek-v3': 'deepseek/deepseek-v3',
+        'deepseek-v31': 'deepseek/deepseek-v3',
+        'gpt4': 'openai/gpt-4',
+        'gpt-4': 'openai/gpt-4',
+        'claude': 'anthropic/claude-3-haiku',
+        'claude3': 'anthropic/claude-3-haiku',
+      }
+
+      const words = commandText.split(' ')
+      const firstWord = words[0].toLowerCase()
+      if (modelMap[firstWord]) {
+        model = modelMap[firstWord]
+        prompt = words.slice(1).join(' ')
+      }
+
+      if (!prompt) return
+
+      // Create user node first
+      const userNodeId = createMessageNode(editor, { role: 'user', text: prompt, width: 420, height: 140 })
+      if (lastNodeRef.current) {
+        linkNodes(editor, lastNodeRef.current, userNodeId)
+      }
+      console.log("this is the lastnoderef data: ")
+      console.log(lastNodeRef)
+      lastNodeRef.current = userNodeId
+
+      // Then trigger streaming which will create assistant node and link from the last node
+      console.log(`Chaining streaming with model: ${model}`)
+      setIsOpen(false)
+      setInput('')
+      await complete(prompt, { body: { model } })
+
+    } else if (input.startsWith('msg ')) {
+      const text = input.slice(4).trim()
+      if (!text || !editor) return
+      const nodeId = createMessageNode(editor, { role: 'user', text, width: 420, height: 140 })
+      if (lastNodeRef.current) {
+        linkNodes(editor, lastNodeRef.current, nodeId)
+      }
+      lastNodeRef.current = nodeId
     } else {
       console.log('Unknown command:', input)
       setIsOpen(false)
@@ -135,7 +193,7 @@ export function CommandPalette() {
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="add <your prompt>"
+            placeholder="add [model] <your prompt>"
             className="w-full px-2 py-3 outline-none text-lg"
             onKeyDown={(e) => e.stopPropagation()}
             disabled={isLoading}
@@ -149,7 +207,10 @@ export function CommandPalette() {
 
         <div className="px-4 pb-2 text-xs text-gray-500">
           {input === '' && (
-            <span>Type "add" followed by your prompt • ESC to close</span>
+            <div>
+              <div>Type "add [model] &lt;prompt&gt;" • ESC to close</div>
+              <div className="mt-1 text-gray-400">Models: deepseek, deepseek-v3, gpt4, claude, or default (gpt-3.5)</div>
+            </div>
           )}
         </div>
       </form>

@@ -11,10 +11,13 @@ const openrouter = createOpenRouter({
 export async function POST(req: Request) {
 
   try {
-    const { prompt }: { prompt: string } = await req.json();
+    const { prompt, model }: { prompt: string; model?: string } = await req.json();
+
+    const selectedModel = model || 'gpt-3.5-turbo';
+    console.log(`API Route: Using model ${selectedModel} for prompt: ${prompt.substring(0, 50)}...`);
 
     const result = streamText({
-      model: openrouter('gpt-3.5-turbo'),
+      model: openrouter(selectedModel),
       prompt,
     });
 
