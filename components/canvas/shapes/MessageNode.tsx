@@ -69,17 +69,22 @@ export class MessageNodeUtil extends ShapeUtil<MessageNodeShape> {
 
     // Stream chunks into this node's text
     useEffect(() => {
+      console.log("effect 72")
       if (!completion) return
       const newHeight = computeAutoHeight(completion)
-      try {
-        editor.updateShape<MessageNodeShape>({
-          id: shape.id,
-          type: 'message-node',
-          props: { text: completion, h: newHeight },
-        })
-      } catch (err) {
-        console.error('Failed to update node during streaming', err)
-      }
+      // try {
+      //   console.log("effect 72")
+      editor.updateShape<MessageNodeShape>({
+        id: shape.id,
+        type: 'message-node',
+        props: { text: completion, h: newHeight },
+      })
+      // } catch (err) {
+      //   console.error('Failed to update node during streaming', err)
+      // }
+      console.log("effect 84")
+      console.log(computeAutoHeight)
+
     }, [completion, computeAutoHeight, editor, shape.id])
 
     const widthScale = 0.5

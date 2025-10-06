@@ -22,48 +22,18 @@ export function MessageNodeView({
   isLoading,
   widthPercent = 50,
 }: MessageNodeViewProps) {
-  const border = role === 'user' ? '#7c3aed' : '#2563eb'
+  const borderClass = role === 'user' ? 'border-purple-600' : 'border-blue-600'
 
   return (
     <div
-      style={{
-        width: `${widthPercent}%`,
-        height: '100%',
-        border: `2px solid ${border}`,
-        borderRadius: 16,
-        background: 'white',
-        display: 'flex',
-        flexDirection: 'column',
-        boxShadow: '0 8px 24px rgba(0,0,0,0.08)',
-        overflow: 'hidden',
-        boxSizing: 'border-box',
-      }}
+      className={`box-border flex h-full flex-col overflow-hidden rounded-2xl border-2 bg-white shadow-lg ${borderClass}`}
+      style={{ width: `${widthPercent}%`, height: '100%' }}
     >
-      <div
-        style={{
-          padding: '8px 12px',
-          fontSize: 12,
-          color: '#64748b',
-          borderBottom: '1px solid #e5e7eb',
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: 8,
-        }}
-      >
+      <div className="inline-flex items-center gap-2 border-b border-slate-200 px-3 py-2 text-xs text-slate-500">
         {role}
       </div>
-      <div style={{ flex: 1, padding: 12 }}>
-        <div
-          style={{
-            background: '#f8fafc',
-            border: '1px solid #e5e7eb',
-            borderRadius: 12,
-            padding: 12,
-            minHeight: 80,
-            overflow: 'auto',
-            whiteSpace: 'pre-wrap',
-          }}
-        >
+      <div className="flex-1 p-3">
+        <div className="min-h-[200px] whitespace-pre-wrap overflow-auto rounded-xl border border-slate-200 bg-slate-50 p-3">
           {text || ' '}
         </div>
       </div>
@@ -72,16 +42,7 @@ export function MessageNodeView({
           e.preventDefault()
           onSubmit()
         }}
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr auto',
-          gap: 8,
-          padding: 12,
-          borderTop: '1px solid #e5e7eb',
-          alignItems: 'center',
-          maxWidth: '100%',
-          boxSizing: 'border-box',
-        }}
+        className="box-border grid grid-cols-[1fr_auto] items-center gap-2 border-t border-slate-200 p-3"
         // Prevent canvas selection from swallowing pointer events
         onPointerDown={(e) => e.stopPropagation()}
       >
@@ -89,20 +50,13 @@ export function MessageNodeView({
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Type your message..."
-          style={{ width: '100%', padding: '10px 12px', borderRadius: 12, border: '1px solid #e5e7eb', background: 'white' }}
+          className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         <button
           type="submit"
           aria-label="Send message"
           disabled={isLoading}
-          style={{
-            padding: '10px 12px',
-            background: '#2563eb',
-            color: 'white',
-            borderRadius: 12,
-            opacity: isLoading ? 0.6 : 1,
-            cursor: isLoading ? 'not-allowed' : 'pointer',
-          }}
+          className="rounded-xl bg-blue-600 px-3 py-2 text-white transition-opacity disabled:cursor-not-allowed disabled:opacity-60"
           // Ensure the button is clickable inside the canvas
           onPointerDown={(e) => e.stopPropagation()}
         >
