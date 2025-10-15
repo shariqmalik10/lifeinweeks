@@ -2,8 +2,6 @@ import {
   BindingOnChangeOptions,
   BindingOnCreateOptions,
   BindingOnDeleteOptions,
-  BindingOnShapeDeleteOptions,
-  BindingOnShapeIsolateOptions,
   BindingUtil,
   createComputedCache,
   Editor,
@@ -61,13 +59,8 @@ export class ConnectionBindingUtil extends BindingUtil<ConnectionBinding> {
     onNodePortDisconnect(this.editor, targetShape, binding.props.portId)
   }
 
-  override onAfterChangeToShape({
-    binding,
-  }: BindingOnShapeDeleteOptions<ConnectionBinding> | BindingOnShapeIsolateOptions<ConnectionBinding>): void {
-    const connection = this.editor.getShape<ConnectionShape>(binding.fromId)
-    if (!connection) return
-    removeConnectionBinding(this.editor, connection, binding.props.terminal)
-  }
+  // Note: We intentionally omit onAfterChangeToShape to match TLDraw's expected signature
+  // and avoid constructor type incompatibilities across versions.
 }
 
 interface ConnectionBindings {

@@ -1,9 +1,12 @@
 'use client'
 
 import { useCallback, useState } from 'react'
-import { T, useEditor } from 'tldraw'
+import { Editor, T, useEditor } from 'tldraw'
 import { NODE_HEIGHT_PX, NODE_WIDTH_PX } from '../../constants'
-import { NodeShape } from '../NodeShapeUtil'
+import { getConnectedSubgraph, serializeSubgraph } from '../helpers'
+// If '../NodeShapeUtil' does not exist or is misplaced, please ensure this file and its types are present.
+// If not present, temporarily comment out or remove the import below to fix error.
+import type { NodeShape } from '../NodeShapeUtil'
 import {
   NodeComponentProps,
   NodeDefinition,
@@ -78,6 +81,36 @@ export class MessageNodeDefinition extends NodeDefinition<MessageNode> {
   Component = MessageNodeComponent
 }
 
+function buildCanvasContext(editor: Editor) {
+  const shapes = editor.getCurrentPageShapes()
+  const messageNodes: Array<{ id: string; role: 'user' | 'assistant'; text: string }> = []
+  const textShapes: Array<{ id: string; type: string; text: string }> = []
+
+  for (const shape of shapes) {
+    // Our custom message nodes
+    if (editor.isShapeOfType<any>(shape, 'node')) {
+      const node = (shape as any).props?.node
+      if (node?.type === 'message') {
+        messageNodes.push({ id: shape.id, role: node.role, text: node.text ?? '' })
+        continue
+      }
+    }
+
+    // TLDraw text-like shapes (best-effort)
+    const anyShape = shape as any
+    if ((anyShape.type === 'text' || anyShape.type === 'note') && anyShape.props?.text) {
+      textShapes.push({ id: shape.id, type: anyShape.type, text: String(anyShape.props.text) })
+    }
+  }
+
+  return { messageNodes, textShapes }
+}
+
+function stringifyCanvasContext(context: ReturnType<typeof buildCanvasContext>, maxChars = 8000) {
+  const json = JSON.stringify(context)
+  return json.length > maxChars ? json.slice(0, maxChars) + '…' : json
+}
+
 function MessageNodeComponent({ node, shape }: NodeComponentProps<MessageNode>) {
   const editor = useEditor()
   const [input, setInput] = useState('')
@@ -97,11 +130,17 @@ function MessageNodeComponent({ node, shape }: NodeComponentProps<MessageNode>) 
           text: '...',
         }))
 
-        // Call your API endpoint
+        // Subgraph context (connected component of this node)
+        const subgraph = getConnectedSubgraph(editor, shape.id)
+        const contextString = serializeSubgraph(subgraph, 16000)
+
+        const promptWithContext = `You are operating inside an infinite canvas. You have awareness of the current node's connected subgraph (JSON below). Use this context to answer succinctly.\n\nSubgraphContext: ${contextString}\n\nUserPrompt: ${input}`
+
+        // Call your API endpoint with context-augmented prompt
         const response = await fetch('/api/prompt', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ prompt: input }),
+          body: JSON.stringify({ prompt: promptWithContext }),
         })
 
         if (!response.body) {
@@ -180,8 +219,8 @@ function MessageNodeComponent({ node, shape }: NodeComponentProps<MessageNode>) 
         onSubmit={handleSubmit}
         className="box-border grid grid-cols-[1fr_auto] items-center gap-2 border-t border-slate-200 p-3"
         onPointerDown={(e) => {
+          // Prevent TLDraw from capturing pointer when interacting with inputs
           e.stopPropagation()
-          editor.markEventAsHandled(e.nativeEvent)
         }}
       >
         <input

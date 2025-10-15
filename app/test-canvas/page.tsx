@@ -1,6 +1,9 @@
 "use client";
 import { useTLDrawEditor } from '@/app/hooks/useTLDrawEditor';
-import { NodeShapeUtil } from '@/components/canvas/nodes/NodeShapeUtil';
+import { NodeShapeUtil } from '@/components/canvas/nodes/NodeShapeUtil'
+import { ConnectionShapeUtil } from '@/components/canvas/connection/ConnectionShapeUtil'
+import { ConnectionBindingUtil } from '@/components/canvas/connection/ConnectionBindingUtil'
+import { createMessageNode, connectNodes } from '@/components/canvas/nodes/helpers'
 import { Tldraw } from 'tldraw';
 import "tldraw/tldraw.css"
 
@@ -11,23 +14,19 @@ export default function TestCanvasPage() {
     <div className="fixed inset-0">
       <Tldraw
         hideUi
-        shapeUtils={[NodeShapeUtil]}
+        shapeUtils={[NodeShapeUtil, ConnectionShapeUtil]}
+        bindingUtils={[ConnectionBindingUtil]}
         onMount={(editor) => {
           setEditor(editor)
-          
-          // Create a test node on mount to verify Tailwind styles
-          editor.createShape({
-            type: 'node',
-            x: 200,
-            y: 200,
-            props: {
-              node: {
-                type: 'message',
-                role: 'assistant',
-                text: 'Hello! I\'m a message node with Tailwind styling. Type a message below and click Send to test streaming!',
-              },
-            },
-          })
+
+          // Guard against duplicate bootstrapping in React Strict Mode / re-mounts
+          const hasExistingNode = editor.getCurrentPageShapes().some((s) => s.type === 'node')
+          if (hasExistingNode) return
+
+          // Create exactly two nodes and connect them
+          const a = createMessageNode(editor, { x: 200, y: 200, role: 'user', text: 'Parent step' })
+          const b = createMessageNode(editor, { x: 200, y: 480, role: 'assistant', text: 'Child step' })
+          connectNodes(editor, a, b)
         }}
       />
     </div>
