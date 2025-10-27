@@ -13,7 +13,8 @@ export async function POST(req: Request) {
   try {
     const { prompt, model }: { prompt: string; model?: string } = await req.json();
 
-    const selectedModel = model || 'gpt-3.5-turbo';
+    // const selectedModel = model || 'deepseek/deepseek-chat';
+    const selectedModel = 'deepseek/deepseek-chat-v3.1:free';
     console.log(`API Route: Using model ${selectedModel} for prompt: ${prompt.substring(0, 50)}...`);
 
     const result = streamText({

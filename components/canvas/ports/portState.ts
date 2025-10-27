@@ -10,7 +10,7 @@ export interface PortState {
   // eligiblePorts is the set of ports that the user can connect a new connection to.
   eligiblePorts: {
     terminal: 'start' | 'end'
-    excludeNodes: Set<TLShapeId> | null
+    excludeNodes: TLShapeId[] | null
   } | null
 }
 
@@ -27,7 +27,14 @@ export const portState = {
       })
       portStateMap.set(editor, state)
     }
-    return state.get()
+    // Return a deep-cloned plain object to avoid non-js data in records
+    const s = state.get()
+    return {
+      hintingPort: s.hintingPort ? { shapeId: String(s.hintingPort.shapeId), portId: s.hintingPort.portId } : null,
+      eligiblePorts: s.eligiblePorts
+        ? { terminal: s.eligiblePorts.terminal, excludeNodes: s.eligiblePorts.excludeNodes ? [...s.eligiblePorts.excludeNodes] : null }
+        : null,
+    }
   },
   update(editor: Editor, updater: (state: PortState) => PortState) {
     let state = portStateMap.get(editor)
@@ -38,7 +45,15 @@ export const portState = {
       })
       portStateMap.set(editor, state)
     }
-    state.set(updater(state.get()))
+    const next = updater(state.get())
+    // Ensure plain data shapes stored in atom
+    const clean: PortState = {
+      hintingPort: next.hintingPort ? { shapeId: String(next.hintingPort.shapeId), portId: next.hintingPort.portId } : null,
+      eligiblePorts: next.eligiblePorts
+        ? { terminal: next.eligiblePorts.terminal, excludeNodes: next.eligiblePorts.excludeNodes ? [...next.eligiblePorts.excludeNodes] : null }
+        : null,
+    }
+    state.set(clean)
   },
 }
 

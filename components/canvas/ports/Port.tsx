@@ -19,7 +19,7 @@ export type ShapePort = T.TypeOf<typeof shapePort>
  * Port ids are unique within a shape. To identify a port we need both the shape id and the port id.
  */
 export interface PortIdentifier {
-  shapeId: TLShapeId
+  shapeId: string
   portId: PortId
 }
 
@@ -36,7 +36,7 @@ export function Port({ shapeId, port }: { shapeId: TLShapeId; port: ShapePort })
     'isHinting',
     () => {
       const { hintingPort } = portState.get(editor)
-      return hintingPort && hintingPort.portId === port.id && hintingPort.shapeId === shapeId
+      return hintingPort && hintingPort.portId === port.id && hintingPort.shapeId === String(shapeId)
     },
     [editor, shapeId, port.id]
   )
@@ -49,7 +49,7 @@ export function Port({ shapeId, port }: { shapeId: TLShapeId; port: ShapePort })
       const { eligiblePorts: eligiblePorts } = portState.get(editor)
       if (!eligiblePorts) return false
       if (eligiblePorts.terminal !== port.terminal) return false
-      if (eligiblePorts.excludeNodes?.has(shapeId)) return false
+      if (eligiblePorts.excludeNodes?.includes(String(shapeId))) return false
       if (port.terminal === 'end') {
         // if the port is an end port, it can only have one connection, so it's not eligible
         // when there is a connection

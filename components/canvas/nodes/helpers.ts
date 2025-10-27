@@ -1,6 +1,6 @@
 // components/canvas/nodes/helpers.ts
 import { Editor, TLShapeId, createShapeId } from 'tldraw'
-import { NODE_HEIGHT_PX, NODE_WIDTH_PX, DEFAULT_NODE_SPACING_PX } from '../constants'
+import { NODE_HEIGHT_PX, NODE_WIDTH_PX, DEFAULT_NODE_SPACING_PX, LANE_GAP_PX, LANE_MARGIN_PX, CAMERA_FRAME_MARGIN_PX } from '../constants'
 import { ConnectionShape } from '../connection/ConnectionShapeUtil'
 import { createOrUpdateConnectionBinding } from '../connection/ConnectionBindingUtil'
 import { getAllConnectedNodes, getNodePortConnections, getNodePorts } from './nodePorts'
@@ -16,7 +16,7 @@ export function createMessageNode(
     type: 'node',
     x: opts.x,
     y: opts.y,
-    props: { node: { type: 'message', role: opts.role ?? 'assistant', text: opts.text ?? '' } },
+    props: { node: { type: 'message', role: opts.role ?? 'assistant', text: opts.text ?? '', autoSplit: false } },
   })
   return id
 }
@@ -54,10 +54,17 @@ export function connectNodes(editor: Editor, fromId: TLShapeId, toId: TLShapeId)
 export function layoutSpawnBelow(editor: Editor, parentId: TLShapeId, count: number) {
   const b = editor.getShapePageBounds(parentId)!
   const startY = b.maxY + DEFAULT_NODE_SPACING_PX
-  const x = b.x
+  const baseX = b.x
+  const gapX = NODE_WIDTH_PX + LANE_GAP_PX
   const positions = []
   for (let i = 0; i < count; i++) {
-    positions.push({ x, y: startY + i * (NODE_HEIGHT_PX + DEFAULT_NODE_SPACING_PX) })
+    let offset = 0
+    if (i > 0) {
+      const k = Math.ceil(i / 2)
+      const dir = i % 2 === 1 ? -1 : 1 // 1:left, 2:right, 3:left*2, 4:right*2, ...
+      offset = dir * k * gapX
+    }
+    positions.push({ x: baseX + offset, y: startY + i * (NODE_HEIGHT_PX + DEFAULT_NODE_SPACING_PX) })
   }
   return positions
 }
@@ -70,7 +77,63 @@ export function layoutSpawnRight(editor: Editor, parentId: TLShapeId, count: num
   for (let i = 0; i < count; i++) {
     positions.push({ x: startX, y: y + i * (NODE_HEIGHT_PX + DEFAULT_NODE_SPACING_PX) })
   }
-  return positions
+  return nudgeToAvoidOverlaps(editor, positions, { direction: 'vertical' })
+}
+
+// Basic collision-aware nudging that remains simple and fast
+function nudgeToAvoidOverlaps(
+  editor: Editor,
+  positions: { x: number; y: number }[],
+  opts: { direction: 'vertical' | 'horizontal' }
+) {
+  const taken = editor.getCurrentPageShapes().filter((s) => s.type === 'node').map((s) => editor.getShapePageBounds(s.id)!)
+  const result = [] as { x: number; y: number }[]
+  for (const p of positions) {
+    let x = p.x
+    let y = p.y
+    let tries = 0
+    const maxTries = 12
+    const step = LANE_GAP_PX
+    while (tries < maxTries) {
+      const r = { x, y, w: NODE_WIDTH_PX, h: NODE_HEIGHT_PX }
+      const overlaps = taken.some((b) => rectsOverlap(r, b)) || result.some((b) => rectsOverlap(r, { x: b.x, y: b.y, w: NODE_WIDTH_PX, h: NODE_HEIGHT_PX }))
+      if (!overlaps) break
+      // nudge left/right lanes for vertical stacks
+      if (opts.direction === 'vertical') {
+        const offset = ((tries % 2 === 0 ? 1 : -1) * Math.ceil((tries + 1) / 2)) * step
+        x = p.x + offset
+      } else {
+        const offset = ((tries % 2 === 0 ? 1 : -1) * Math.ceil((tries + 1) / 2)) * step
+        y = p.y + offset
+      }
+      tries++
+    }
+    result.push({ x, y })
+  }
+  return result
+}
+
+function rectsOverlap(a: { x: number; y: number; w: number; h: number }, b: { x: number; y: number; w: number; h: number }) {
+  return !(a.x + a.w + LANE_MARGIN_PX < b.x || b.x + b.w + LANE_MARGIN_PX < a.x || a.y + a.h + LANE_MARGIN_PX < b.y || b.y + b.h + LANE_MARGIN_PX < a.y)
+}
+
+export function frameShapes(editor: Editor, ids: TLShapeId[]) {
+  const bounds = ids
+    .map((id) => editor.getShapePageBounds(id))
+    .filter(Boolean) as { x: number; y: number; w: number; h: number }[]
+  if (!bounds.length) return
+  const union = bounds.reduce((acc, b) => ({
+    x: Math.min(acc.x, b.x),
+    y: Math.min(acc.y, b.y),
+    w: Math.max(acc.x + acc.w, b.x + b.w) - Math.min(acc.x, b.x),
+    h: Math.max(acc.y + acc.h, b.y + b.h) - Math.min(acc.y, b.y),
+  }))
+  // margin
+  union.x -= CAMERA_FRAME_MARGIN_PX
+  union.y -= CAMERA_FRAME_MARGIN_PX
+  union.w += CAMERA_FRAME_MARGIN_PX * 2
+  union.h += CAMERA_FRAME_MARGIN_PX * 2
+  editor.zoomToBounds(union)
 }
 
 // ---- Subgraph & context helpers ----

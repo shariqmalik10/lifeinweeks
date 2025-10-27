@@ -147,7 +147,7 @@ export class ConnectionShapeUtil extends ShapeUtil<ConnectionShape> {
       hintingPort: target ? { shapeId: target.shape.id, portId: target.port.id } : null,
       eligiblePorts: {
         terminal: draggingTerminal,
-        excludeNodes: oppositeTerminalShapeId ? new Set([oppositeTerminalShapeId]) : null,
+        excludeNodes: oppositeTerminalShapeId ? [oppositeTerminalShapeId] : null,
       },
     })
 

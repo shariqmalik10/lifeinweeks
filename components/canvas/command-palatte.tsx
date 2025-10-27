@@ -87,7 +87,7 @@ export function CommandPalette() {
       if (!commandText) return
 
       // Parse model and prompt
-      let model = 'gpt-3.5-turbo'
+      let model = 'deepseek-v3'
       let prompt = commandText
 
       // Check if it starts with a model name
@@ -121,7 +121,7 @@ export function CommandPalette() {
       const commandText = input.slice(6).trim()
       if (!commandText) return
 
-      let model = 'gpt-3.5-turbo'
+      let model = 'deepseek-v3'
       let prompt = commandText
 
       const modelMap: Record<string, string> = {
