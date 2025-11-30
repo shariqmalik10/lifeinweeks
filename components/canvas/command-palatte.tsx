@@ -118,9 +118,9 @@ export function CommandPalette() {
   if (!isOpen) return null
 
   return createPortal(
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center">
+    <div className="fixed inset-0 z-9999 flex items-center justify-center">
       <div
-        className="absolute inset-0 bg-black/20 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/20 backdrop-blur-xs"
         onClick={() => setIsOpen(false)}
       />
 
@@ -136,7 +136,7 @@ export function CommandPalette() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="add <your prompt>"
-            className="w-full px-2 py-3 outline-none text-lg"
+            className="w-full px-2 py-3 outline-hidden text-lg"
             onKeyDown={(e) => e.stopPropagation()}
             disabled={isLoading}
           />
