@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
+import { Geist, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
 
@@ -19,6 +19,12 @@ const geistSans = Geist({
   subsets: ["latin"],
 });
 
+const playfairSerif = Playfair_Display({
+  variable: "--font-playfair-serif",
+  display: "swap",
+  subsets: ["latin"],
+});
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -32,7 +38,7 @@ export default function RootLayout({
           src="//unpkg.com/react-scan/dist/auto.global.js"
         />
       </head>
-      <body className={`${geistSans.className} antialiased`}>
+      <body className={`${geistSans.variable} ${playfairSerif.variable} antialiased`}>
         <Providers>
           {children}
         </Providers>

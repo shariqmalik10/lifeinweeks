@@ -42,6 +42,9 @@
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
+
+  --font-family-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-family-serif: var(--font-playfair-serif), ui-serif, Georgia, serif;
 }
 
 /*
@@ -123,6 +126,27 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
+  }
+  h1 {
+    @apply font-serif text-5xl font-medium tracking-tight;
+  }
+  h2 {
+    @apply font-serif text-4xl font-semibold tracking-tight;
+  }
+  h3 {
+    @apply font-serif text-3xl font-semibold tracking-tight;
+  }
+  h4 {
+    @apply font-serif text-2xl font-semibold tracking-tight;
+  }
+  h5 {
+    @apply font-serif text-xl font-semibold tracking-tight;
+  }
+  h6 {
+    @apply font-serif text-lg font-semibold tracking-tight;
+  }
+  p {
+    @apply font-sans text-base leading-7;
   }
 }
