@@ -66,58 +66,60 @@
 }
 
 @layer base {
+  /* Light mode - keeping for compatibility but dark is primary */
   :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
-    --primary: 0 0% 9%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 96.1%;
-    --secondary-foreground: 0 0% 9%;
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
+    --background: 240 10% 3.9%; /* Zinc 950 */
+    --foreground: 240 5% 90%; /* Zinc 200 */
+    --card: 240 6% 10%; /* Zinc 900 */
+    --card-foreground: 240 5% 90%; /* Zinc 200 */
+    --popover: 240 6% 10%; /* Zinc 900 */
+    --popover-foreground: 240 5% 90%; /* Zinc 200 */
+    --primary: 239 84% 67%; /* Indigo 500 - accent for "Now" */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 4% 16%; /* Zinc 800 */
+    --secondary-foreground: 240 5% 90%;
+    --muted: 240 4% 16%; /* Zinc 800 */
+    --muted-foreground: 240 4% 46%; /* Zinc 500 */
+    --accent: 239 84% 67%; /* Indigo 500 */
+    --accent-foreground: 0 0% 100%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 0 0% 3.9%;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
+    --border: 240 4% 16%; /* Zinc 800 */
+    --input: 240 4% 16%; /* Zinc 800 */
+    --ring: 239 84% 67%; /* Indigo 500 */
+    /* Grid specific colors */
+    --grid-past: 240 4% 16%; /* Zinc 800 */
+    --grid-future: 240 6% 10%; /* Zinc 900 */
+    --grid-future-border: 240 4% 16%; /* Zinc 800 */
+    --grid-current: 239 84% 67%; /* Indigo 500 */
     --radius: 0.5rem;
   }
+  /* Dark mode is the primary theme per DESIGN.md */
   :root[data-theme="dark"] {
-    --background: 0 0% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
-    --secondary: 0 0% 14.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent: 0 0% 14.9%;
-    --accent-foreground: 0 0% 98%;
+    --background: 240 10% 3.9%; /* Zinc 950 #09090b */
+    --foreground: 240 5% 90%; /* Zinc 200 #e4e4e7 */
+    --card: 240 6% 10%; /* Zinc 900 #18181b */
+    --card-foreground: 240 5% 90%; /* Zinc 200 */
+    --popover: 240 6% 10%; /* Zinc 900 */
+    --popover-foreground: 240 5% 90%; /* Zinc 200 */
+    --primary: 239 84% 67%; /* Indigo 500 #6366f1 */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 4% 16%; /* Zinc 800 #27272a */
+    --secondary-foreground: 240 5% 90%;
+    --muted: 240 4% 16%; /* Zinc 800 */
+    --muted-foreground: 240 4% 46%; /* Zinc 500 #71717a */
+    --accent: 239 84% 67%; /* Indigo 500 */
+    --accent-foreground: 0 0% 100%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
-    --ring: 0 0% 83.1%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    --border: 240 4% 16%; /* Zinc 800 */
+    --input: 240 4% 16%; /* Zinc 800 */
+    --ring: 239 84% 67%; /* Indigo 500 */
+    /* Grid specific colors */
+    --grid-past: 240 4% 16%; /* Zinc 800 */
+    --grid-future: 240 6% 10%; /* Zinc 900 */
+    --grid-future-border: 240 4% 16%; /* Zinc 800 */
+    --grid-current: 239 84% 67%; /* Indigo 500 */
   }
 }
 
@@ -149,4 +151,103 @@
   p {
     @apply font-sans text-base leading-7;
   }
+}
+
+/* ElysiaJS-style gradient background */
+.elysia-gradient {
+  width: 1100px;
+  height: 1100px;
+  max-width: 100%;
+  margin: 0 auto;
+  opacity: 0.15;
+  background: radial-gradient(
+    ellipse at center,
+    #d7e0ff 0%,
+    #eaecff 35%,
+    transparent 70%
+  );
+}
+
+:root[data-theme="dark"] .elysia-gradient {
+  opacity: 0.5;
+  background: radial-gradient(
+    ellipse at center,
+    #797ee199 0%,
+    transparent 70%
+  );
+}
+
+/* ElysiaJS Ray Animation */
+@keyframes ray {
+  from {
+    background-position: 50% 50%, 50% 50%;
+  }
+  to {
+    background-position: 350% 50%, 350% 50%;
+  }
+}
+
+.ray {
+  --stripes: repeating-linear-gradient(
+    100deg,
+    #fff 0%,
+    #fff 7%,
+    transparent 10%,
+    transparent 12%,
+    #fff 16%
+  );
+  --stripesDark: repeating-linear-gradient(
+    100deg,
+    #000 0%,
+    #000 7%,
+    transparent 10%,
+    transparent 12%,
+    #000 16%
+  );
+  --rainbow: repeating-linear-gradient(
+    100deg,
+    #60a5fa 10%,
+    #e879f9 16%,
+    #5eead4 22%,
+    #60a5fa 30%
+  );
+  contain: strict;
+  contain-intrinsic-size: 100vw 40vh;
+  background-image: var(--stripes), var(--rainbow);
+  background-size: 300%, 200%;
+  background-position: 50% 50%, 50% 50%;
+  height: inherit;
+  width: 100%;
+  -webkit-transform: translateZ(0);
+  -webkit-perspective: 1000;
+  -webkit-backface-visibility: hidden;
+  filter: invert(100%);
+  mask-image: radial-gradient(ellipse at 100% 0%, black 40%, transparent 70%);
+  pointer-events: none;
+}
+
+.ray::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: var(--stripes), var(--rainbow);
+  background-size: 200%, 100%;
+  mix-blend-mode: difference;
+}
+
+.-animate.ray::after {
+  animation: ray 90s linear infinite;
+}
+
+.-static.ray::after {
+  animation: unset !important;
+}
+
+:root[data-theme="dark"] .ray {
+  background-image: var(--stripesDark), var(--rainbow);
+  filter: opacity(50%) saturate(200%);
+}
+
+:root[data-theme="dark"] .ray::after {
+  background-image: var(--stripesDark), var(--rainbow);
 }
