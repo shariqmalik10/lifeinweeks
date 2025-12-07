@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
+import { RayBackground } from "@/components/ray-background";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -38,7 +39,11 @@ export default function RootLayout({
           src="//unpkg.com/react-scan/dist/auto.global.js"
         />
       </head>
-      <body className={`${geistSans.variable} ${playfairSerif.variable} antialiased`}>
+      <body className={`${geistSans.variable} ${playfairSerif.variable} antialiased min-h-screen`}>
+        {/* ElysiaJS-style ray background */}
+        <RayBackground className="h-[60vh] -top-16 fixed opacity-[.35] dark:opacity-50" />
+        {/* ElysiaJS-style gradient overlay */}
+        <div className="elysia-gradient pointer-events-none fixed inset-0 -top-[70vh] w-full h-screen" />
         <Providers>
           {children}
         </Providers>
