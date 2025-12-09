@@ -88,10 +88,10 @@
     --input: 240 4% 16%; /* Zinc 800 */
     --ring: 239 84% 67%; /* Indigo 500 */
     /* Grid specific colors */
-    --grid-past: 240 4% 16%; /* Zinc 800 */
+    --grid-past: 0 72% 51%; /* Red 600 #dc2626 */
     --grid-future: 240 6% 10%; /* Zinc 900 */
-    --grid-future-border: 240 4% 16%; /* Zinc 800 */
-    --grid-current: 239 84% 67%; /* Indigo 500 */
+    --grid-future-border: 240 4% 30%; /* Zinc 700 */
+    --grid-current: 0 72% 51%; /* Red 600 #dc2626 */
     --radius: 0.5rem;
   }
   /* Dark mode is the primary theme per DESIGN.md */
@@ -116,10 +116,10 @@
     --input: 240 4% 16%; /* Zinc 800 */
     --ring: 239 84% 67%; /* Indigo 500 */
     /* Grid specific colors */
-    --grid-past: 240 4% 16%; /* Zinc 800 */
+    --grid-past: 0 72% 51%; /* Red 600 #dc2626 */
     --grid-future: 240 6% 10%; /* Zinc 900 */
-    --grid-future-border: 240 4% 16%; /* Zinc 800 */
-    --grid-current: 239 84% 67%; /* Indigo 500 */
+    --grid-future-border: 240 4% 30%; /* Zinc 700 */
+    --grid-current: 0 72% 51%; /* Red 600 #dc2626 */
   }
 }
 
