@@ -174,7 +174,7 @@ export default function Home() {
           <p className="text-7xl font-bold text-white tracking-tight">
             {Math.round(stats.percentComplete)}%
           </p>
-          <div className="w-16 h-1 bg-red-500 mt-2 mb-2" />
+          <div className="w-16 h-1 bg-red-500 mt-3 mb-3" />
           <p className="text-sm text-zinc-500">
             of your 90 years is gone.
           </p>
@@ -235,45 +235,57 @@ export default function Home() {
       <div className="flex-1 flex flex-col min-w-0 p-4">
         {/* Grid Container with axes */}
         <div className="flex-1 min-h-0 flex">
-          {/* Age axis labels */}
-          <div className="flex flex-col justify-between pr-2 py-1 shrink-0">
-            {gridData.type === "weeks" && (
-              <>
-                {[0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85].map((age) => (
-                  <span key={age} className="text-[10px] text-zinc-600 font-mono h-0 leading-none">
-                    {age}
-                  </span>
-                ))}
-              </>
-            )}
-            {gridData.type === "months" && (
-              <>
-                {[0, 10, 20, 30, 40, 50, 60, 70, 80, 90].map((age) => (
-                  <span key={age} className="text-[10px] text-zinc-600 font-mono h-0 leading-none">
-                    {age}
-                  </span>
-                ))}
-              </>
-            )}
-          </div>
+          {/* Age axis labels - positioned to align with grid rows */}
+          {gridData.type === "weeks" && (
+            <div className="flex flex-col pr-2 shrink-0 pt-5">
+              {gridData.rows.map((row, idx) => (
+                <div key={row.age} className="flex-1 flex items-center justify-end min-h-0">
+                  {row.age % 5 === 0 && (
+                    <span className="text-[10px] text-zinc-600 font-mono leading-none">
+                      {row.age}
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+          {gridData.type === "months" && (
+            <div className="flex flex-col pr-2 shrink-0 pt-5">
+              {gridData.rows.map((row) => (
+                <div key={row.age} className="flex-1 flex items-center justify-end min-h-0">
+                  {row.age % 10 === 0 && (
+                    <span className="text-[10px] text-zinc-600 font-mono leading-none">
+                      {row.age}
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
 
           <div className="flex-1 flex flex-col min-h-0">
             {/* Week axis labels */}
             {gridData.type === "weeks" && (
-              <div className="flex justify-between mb-1 px-0.5">
-                {[1, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50].map((week) => (
-                  <span key={week} className="text-[10px] text-zinc-600 font-mono">
-                    {week}
-                  </span>
+              <div className="flex mb-1 shrink-0 h-4">
+                {Array.from({ length: 52 }, (_, i) => i + 1).map((week) => (
+                  <div key={week} className="flex-1 min-w-0 flex justify-center">
+                    {week === 1 || week % 5 === 0 ? (
+                      <span className="text-[10px] text-zinc-600 font-mono leading-none">
+                        {week}
+                      </span>
+                    ) : null}
+                  </div>
                 ))}
               </div>
             )}
             {gridData.type === "months" && (
-              <div className="flex justify-between mb-1 px-0.5">
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((month) => (
-                  <span key={month} className="text-[10px] text-zinc-600 font-mono">
-                    {month}
-                  </span>
+              <div className="flex mb-1 shrink-0 h-4">
+                {Array.from({ length: 12 }, (_, i) => i + 1).map((month) => (
+                  <div key={month} className="flex-1 min-w-0 flex justify-center">
+                    <span className="text-[10px] text-zinc-600 font-mono leading-none">
+                      {month}
+                    </span>
+                  </div>
                 ))}
               </div>
             )}
@@ -302,14 +314,15 @@ function YearsGrid({ decades }: { decades: Array<{ decade: number; years: Array<
   return (
     <div className="h-full flex flex-col justify-center items-center gap-3">
       {decades.map((decadeData) => (
-        <div key={decadeData.decade} className="flex gap-3 items-center">
+        <div key={decadeData.decade} className="flex gap-4 items-center">
           {decadeData.years.map((year) => (
             <div
               key={year.age}
               className={cn(
-                "w-10 h-10 rotate-45 transition-all cursor-pointer",
+                "w-10 h-12 rotate-45 cursor-pointer"
+                ,
                 year.status === "past" && "bg-red-500",
-                year.status === "current" && "bg-red-500 animate-pulse shadow-[0_0_12px_rgba(239,68,68,0.6)]",
+                year.status === "current" && "bg-red-400",
                 year.status === "future" && "bg-transparent border-2 border-zinc-700 hover:border-zinc-500"
               )}
               title={`Age ${year.age}`}
@@ -331,9 +344,10 @@ function MonthsGrid({ rows }: { rows: Array<{ age: number; months: Array<{ month
             <div
               key={month.month}
               className={cn(
-                "flex-1 min-w-0 rounded-full transition-all cursor-pointer",
+                "flex-1 min-w-0 rounded-full cursor-pointer"
+                ,
                 month.status === "past" && "bg-red-500",
-                month.status === "current" && "bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.6)]",
+                month.status === "current" && "bg-red-400",
                 month.status === "future" && "bg-transparent border border-zinc-700 hover:border-zinc-500"
               )}
               title={`Age ${row.age}, Month ${month.month + 1}`}
@@ -355,10 +369,11 @@ function WeeksGrid({ rows }: { rows: Array<{ age: number; weeks: Array<{ week: n
             <div
               key={week.week}
               className={cn(
-                "flex-1 min-w-0 transition-all cursor-pointer",
+                "flex-1 min-w-0 cursor-pointer bg-transparent border"
+                ,
                 week.status === "past" && "bg-red-500",
-                week.status === "current" && "bg-red-500 animate-pulse shadow-[0_0_6px_rgba(239,68,68,0.6)]",
-                week.status === "future" && "bg-transparent border border-zinc-800 hover:border-zinc-600"
+                week.status === "current" && "bg-red-400",
+                week.status === "future"
               )}
               title={`Age ${row.age}, Week ${week.week + 1}`}
             />
