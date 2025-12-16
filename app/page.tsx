@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
@@ -15,7 +15,40 @@ export default function Home() {
 
   const [birthDate, setBirthDate] = useState<Date>(defaultDate);
   const [timeUnit, setTimeUnit] = useState<TimeUnit>("weeks");
+  const [showWaitlist, setShowWaitlist] = useState(false);
+  const [waitlistDismissed, setWaitlistDismissed] = useState(false);
+  const [email, setEmail] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const lifespan = 90; // Fixed at 90 years
+
+  // Show waitlist modal after 30 seconds
+  useEffect(() => {
+    if (waitlistDismissed) return;
+    
+    const timer = setTimeout(() => {
+      setShowWaitlist(true);
+    }, 3000); // 30 seconds
+
+    return () => clearTimeout(timer);
+  }, [waitlistDismissed]);
+
+  const handleWaitlistSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) return;
+    
+    setIsSubmitting(true);
+    // Simulate API call - replace with actual waitlist API
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    setIsSubmitting(false);
+    setShowWaitlist(false);
+    setWaitlistDismissed(true);
+    // You can add actual form submission logic here
+  };
+
+  const handleSkipToDemo = () => {
+    setShowWaitlist(false);
+    setWaitlistDismissed(true);
+  };
 
   // Calculate life stats
   const stats = useMemo(() => {
@@ -305,6 +338,109 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      {/* Waitlist Modal */}
+      {showWaitlist && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          style={{
+            animation: "fadeIn 0.3s ease-out"
+          }}
+        >
+          {/* Backdrop */}
+          <div 
+            className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+            onClick={handleSkipToDemo}
+            style={{
+              animation: "fadeIn 0.3s ease-out"
+            }}
+          />
+          
+          {/* Modal */}
+          <div 
+            className="relative w-full max-w-lg bg-zinc-950 border border-zinc-800 rounded-2xl p-8 shadow-2xl"
+            style={{
+              animation: "slideUp 0.4s ease-out"
+            }}
+          >
+            {/* Beta Access Badge */}
+            <div className="flex justify-center mb-6">
+              <span className="px-4 py-1.5 text-xs font-medium text-emerald-400 border border-zinc-700 rounded-full uppercase tracking-wider">
+                Beta Access
+              </span>
+            </div>
+
+            {/* Title */}
+            <h2 className="text-5xl md:text-6xl font-serif text-white text-center mb-4">
+              Life in Weeks
+            </h2>
+
+            {/* Subtitle */}
+            <p className="text-lg text-zinc-400 text-center mb-1">
+              A high-fidelity visualization of your mortality.
+            </p>
+            <p className="text-lg text-zinc-500 text-center italic mb-8">
+              Stop existing. Start living.
+            </p>
+
+            {/* Form Card */}
+            <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-6 mb-6">
+              <form onSubmit={handleWaitlistSubmit} className="space-y-4">
+                <Input
+                  type="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full h-12 text-base bg-zinc-900 border-zinc-700 text-white placeholder:text-zinc-600 font-mono"
+                  required
+                />
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full h-12 bg-white text-black font-semibold text-sm uppercase tracking-wider rounded-lg hover:bg-zinc-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isSubmitting ? "Joining..." : "Join Waitlist"}
+                </button>
+              </form>
+
+              {/* Skip to Demo */}
+              <button
+                onClick={handleSkipToDemo}
+                className="w-full mt-4 text-xs font-medium text-zinc-500 uppercase tracking-wider hover:text-zinc-300 transition-colors"
+              >
+                Skip to Demo
+              </button>
+            </div>
+
+            {/* Footer */}
+            <p className="text-sm text-zinc-600 text-center italic">
+              Memento Mori
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Animations */}
+      <style jsx>{`
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+        @keyframes slideUp {
+          from {
+            opacity: 0;
+            transform: translateY(20px) scale(0.98);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+          }
+        }
+      `}</style>
     </main>
   );
 }
