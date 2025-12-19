@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Geist, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
-import { RayBackground } from "@/components/ray-background";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -10,8 +9,8 @@ const defaultUrl = process.env.VERCEL_URL
 
 export const metadata: Metadata = {
   metadataBase: new URL(defaultUrl),
-  title: "My App",
-  description: "My application built with Next.js and Supabase",
+  title: "Life in Weeks",
+  description: "A high-fidelity visualization of your mortality. Memento Mori.",
 };
 
 const geistSans = Geist({
@@ -33,17 +32,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <script
-          crossOrigin="anonymous"
-          src="//unpkg.com/react-scan/dist/auto.global.js"
-        />
-      </head>
-      <body className={`${geistSans.variable} ${playfairSerif.variable} antialiased min-h-screen`}>
-        {/* ElysiaJS-style ray background */}
-        <RayBackground className="h-[60vh] -top-16 fixed opacity-[.35] dark:opacity-50" />
-        {/* ElysiaJS-style gradient overlay */}
-        <div className="elysia-gradient pointer-events-none fixed inset-0 -top-[70vh] w-full h-screen" />
+      <body className={`${geistSans.variable} ${playfairSerif.variable} antialiased min-h-screen bg-zinc-950`}>
         <Providers>
           {children}
         </Providers>

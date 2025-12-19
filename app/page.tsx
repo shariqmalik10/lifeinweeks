@@ -32,17 +32,45 @@ export default function Home() {
     return () => clearTimeout(timer);
   }, [waitlistDismissed]);
 
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+
   const handleWaitlistSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
     
     setIsSubmitting(true);
-    // Simulate API call - replace with actual waitlist API
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    setSubmitError(null);
+    
+    try {
+      const response = await fetch("/api/waitlist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        if (data.alreadyRegistered) {
+          setSubmitError("You're already on the waitlist!");
+        } else {
+          setSubmitError(data.error || "Something went wrong");
+        }
+        setIsSubmitting(false);
+        return;
+      }
+      
+      setSubmitSuccess(true);
+      setTimeout(() => {
+        setShowWaitlist(false);
+        setWaitlistDismissed(true);
+      }, 2000);
+    } catch {
+      setSubmitError("Failed to connect. Please try again.");
+    }
+    
     setIsSubmitting(false);
-    setShowWaitlist(false);
-    setWaitlistDismissed(true);
-    // You can add actual form submission logic here
   };
 
   const handleSkipToDemo = () => {
@@ -339,105 +367,90 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Waitlist Modal */}
+      {/* Waitlist Popup - Bottom Right */}
       {showWaitlist && (
         <div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          className="fixed bottom-6 right-6 z-50 w-80 bg-zinc-900 border border-zinc-700 rounded-xl shadow-2xl overflow-hidden"
           style={{
-            animation: "fadeIn 0.3s ease-out"
+            animation: "slideInRight 0.4s cubic-bezier(0.16, 1, 0.3, 1)"
           }}
         >
-          {/* Backdrop */}
-          <div 
-            className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+          {/* Close Button */}
+          <button
             onClick={handleSkipToDemo}
-            style={{
-              animation: "fadeIn 0.3s ease-out"
-            }}
-          />
-          
-          {/* Modal */}
-          <div 
-            className="relative w-full max-w-lg bg-zinc-950 border border-zinc-800 rounded-2xl p-8 shadow-2xl"
-            style={{
-              animation: "slideUp 0.4s ease-out"
-            }}
+            className="absolute top-3 right-3 text-zinc-500 hover:text-white transition-colors z-10"
+            aria-label="Close"
           >
-            {/* Beta Access Badge */}
-            <div className="flex justify-center mb-6">
-              <span className="px-4 py-1.5 text-xs font-medium text-emerald-400 border border-zinc-700 rounded-full uppercase tracking-wider">
-                Beta Access
-              </span>
-            </div>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
 
-            {/* Title */}
-            <h2 className="text-5xl md:text-6xl font-serif text-white text-center mb-4">
+          {/* Header */}
+          <div className="p-4 pb-3">
+            <span className="inline-block px-2 py-0.5 text-[10px] font-medium text-emerald-400 border border-zinc-600 rounded-full uppercase tracking-wider mb-3">
+              Beta Access
+            </span>
+            <h3 className="text-xl font-serif text-white mb-1">
               Life in Weeks
-            </h2>
-
-            {/* Subtitle */}
-            <p className="text-lg text-zinc-400 text-center mb-1">
-              A high-fidelity visualization of your mortality.
+            </h3>
+            <p className="text-xs text-zinc-400">
+              Get early access to the full experience.
             </p>
-            <p className="text-lg text-zinc-500 text-center italic mb-8">
-              Stop existing. Start living.
-            </p>
+          </div>
 
-            {/* Form Card */}
-            <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-6 mb-6">
-              <form onSubmit={handleWaitlistSubmit} className="space-y-4">
+          {/* Form */}
+          <div className="px-4 pb-4">
+            {submitSuccess ? (
+              <div className="text-center py-4">
+                <div className="text-emerald-400 text-2xl mb-2">✓</div>
+                <p className="text-sm text-white font-medium">You&apos;re on the list!</p>
+                <p className="text-xs text-zinc-400 mt-1">Check your email for confirmation.</p>
+              </div>
+            ) : (
+              <form onSubmit={handleWaitlistSubmit} className="space-y-2">
                 <Input
                   type="email"
                   placeholder="Enter your email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full h-12 text-base bg-zinc-900 border-zinc-700 text-white placeholder:text-zinc-600 font-mono"
+                  className="w-full h-10 text-sm bg-zinc-800 border-zinc-600 text-white placeholder:text-zinc-500 font-mono"
                   required
                 />
+                {submitError && (
+                  <p className="text-xs text-red-400">{submitError}</p>
+                )}
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full h-12 bg-white text-black font-semibold text-sm uppercase tracking-wider rounded-lg hover:bg-zinc-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full h-10 bg-white text-black font-semibold text-xs uppercase tracking-wider rounded-md hover:bg-zinc-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? "Joining..." : "Join Waitlist"}
                 </button>
               </form>
+            )}
+          </div>
 
-              {/* Skip to Demo */}
-              <button
-                onClick={handleSkipToDemo}
-                className="w-full mt-4 text-xs font-medium text-zinc-500 uppercase tracking-wider hover:text-zinc-300 transition-colors"
-              >
-                Skip to Demo
-              </button>
-            </div>
-
-            {/* Footer */}
-            <p className="text-sm text-zinc-600 text-center italic">
+          {/* Footer */}
+          <div className="px-4 py-2 bg-zinc-950/50 border-t border-zinc-800">
+            <p className="text-[10px] text-zinc-500 text-center italic">
               Memento Mori
             </p>
           </div>
         </div>
       )}
 
-      {/* Modal Animations */}
+      {/* Popup Animation */}
       <style jsx>{`
-        @keyframes fadeIn {
+        @keyframes slideInRight {
           from {
             opacity: 0;
+            transform: translateX(100%) translateY(20px);
           }
           to {
             opacity: 1;
-          }
-        }
-        @keyframes slideUp {
-          from {
-            opacity: 0;
-            transform: translateY(20px) scale(0.98);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0) scale(1);
+            transform: translateX(0) translateY(0);
           }
         }
       `}</style>
