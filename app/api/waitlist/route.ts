@@ -30,12 +30,12 @@ export async function POST(request: NextRequest) {
     if (supabaseConfigured) {
       // Store email in Supabase
       const supabase = await createClient();
+      
+      
       const { error: dbError } = await supabase
         .from("waitlist")
         .insert({ email: normalizedEmail })
-        .select()
-        .single();
-
+        
       if (dbError) {
         // Check for duplicate email
         if (dbError.code === "23505") {

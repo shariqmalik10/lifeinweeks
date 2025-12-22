@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
@@ -15,22 +15,11 @@ export default function Home() {
 
   const [birthDate, setBirthDate] = useState<Date>(defaultDate);
   const [timeUnit, setTimeUnit] = useState<TimeUnit>("weeks");
-  const [showWaitlist, setShowWaitlist] = useState(false);
+  const [showWaitlist, setShowWaitlist] = useState(true); // Show immediately
   const [waitlistDismissed, setWaitlistDismissed] = useState(false);
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const lifespan = 90; // Fixed at 90 years
-
-  // Show waitlist modal after 30 seconds
-  useEffect(() => {
-    if (waitlistDismissed) return;
-    
-    const timer = setTimeout(() => {
-      setShowWaitlist(true);
-    }, 3000); // 30 seconds
-
-    return () => clearTimeout(timer);
-  }, [waitlistDismissed]);
 
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState(false);
