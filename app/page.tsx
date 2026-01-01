@@ -70,24 +70,32 @@ export default function Home() {
   // Calculate life stats
   const stats = useMemo(() => {
     const now = new Date();
-    const msPerWeek = 7 * 24 * 60 * 60 * 1000;
+    const msPerDay = 24 * 60 * 60 * 1000;
+    const msPerWeek = 7 * msPerDay;
     const msLived = now.getTime() - birthDate.getTime();
     const weeksLived = Math.floor(msLived / msPerWeek);
+    const daysLived = Math.floor(msLived / msPerDay);
     const totalWeeks = lifespan * 52;
+    const totalDays = lifespan * 365;
     const weeksRemaining = Math.max(0, totalWeeks - weeksLived);
+    const daysRemaining = Math.max(0, totalDays - daysLived);
     const percentComplete = Math.min(100, (weeksLived / totalWeeks) * 100);
     const yearsRemaining = Math.max(0, lifespan - Math.floor(weeksLived / 52));
-    const mealsRemaining = weeksRemaining * 21;
-    const awakeHours = weeksRemaining * 112;
+    
+    // New meaningful stats
+    const sunsetsRemaining = daysRemaining; // 1 per day
+    const weekendsRemaining = weeksRemaining; // 1 weekend per week
+    const awakeHours = weeksRemaining * 112; // ~16 hours/day × 7 days
+    const tripsRemaining = yearsRemaining * 2; // Assuming ~2 trips per year
 
     return {
       weeksLived,
       weeksRemaining,
       percentComplete,
-      summersLeft: yearsRemaining,
-      mondaysLeft: weeksRemaining,
-      mealsRemaining,
+      sunsetsRemaining,
+      weekendsRemaining,
       awakeHours,
+      tripsRemaining,
     };
   }, [birthDate, lifespan]);
 
@@ -238,22 +246,52 @@ export default function Home() {
         </div>
 
         {/* Life Currency Stats */}
-        <div className="space-y-3 mt-auto">
-          <div className="flex justify-between items-center py-2 border-t border-zinc-800">
-            <span className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider">Summers</span>
-            <span className="font-mono text-lg text-white">{stats.summersLeft}</span>
+        <div className="grid grid-cols-2 gap-3 mt-auto">
+          {/* Sunsets */}
+          <div className="bg-gradient-to-br from-orange-950/40 to-zinc-900 rounded-xl p-4 border border-orange-900/30">
+            <div className="flex items-center gap-2 mb-2">
+              <svg className="w-4 h-4 text-orange-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="12" r="4"/>
+                <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+              </svg>
+              <span className="text-[10px] font-medium text-orange-400/80 uppercase tracking-wider">Sunsets</span>
+            </div>
+            <p className="font-mono text-2xl text-white tracking-tight">{stats.sunsetsRemaining.toLocaleString()}</p>
           </div>
-          <div className="flex justify-between items-center py-2 border-t border-zinc-800">
-            <span className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider">Mondays</span>
-            <span className="font-mono text-lg text-white">{stats.mondaysLeft.toLocaleString()}</span>
+
+          {/* Weekends */}
+          <div className="bg-gradient-to-br from-blue-950/40 to-zinc-900 rounded-xl p-4 border border-blue-900/30">
+            <div className="flex items-center gap-2 mb-2">
+              <svg className="w-4 h-4 text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <rect x="3" y="4" width="18" height="18" rx="2"/>
+                <path d="M16 2v4M8 2v4M3 10h18"/>
+              </svg>
+              <span className="text-[10px] font-medium text-blue-400/80 uppercase tracking-wider">Weekends</span>
+            </div>
+            <p className="font-mono text-2xl text-white tracking-tight">{stats.weekendsRemaining.toLocaleString()}</p>
           </div>
-          <div className="flex justify-between items-center py-2 border-t border-zinc-800">
-            <span className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider">Meals</span>
-            <span className="font-mono text-lg text-white">{stats.mealsRemaining.toLocaleString()}</span>
+
+          {/* Awake Hours */}
+          <div className="bg-gradient-to-br from-emerald-950/40 to-zinc-900 rounded-xl p-4 border border-emerald-900/30">
+            <div className="flex items-center gap-2 mb-2">
+              <svg className="w-4 h-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M12 6v6l4 2"/>
+              </svg>
+              <span className="text-[10px] font-medium text-emerald-400/80 uppercase tracking-wider">Awake Hrs</span>
+            </div>
+            <p className="font-mono text-2xl text-white tracking-tight">{stats.awakeHours.toLocaleString()}</p>
           </div>
-          <div className="flex justify-between items-center py-2 border-t border-zinc-800 border-b">
-            <span className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider">Awake Hrs</span>
-            <span className="font-mono text-lg text-white">{stats.awakeHours.toLocaleString()}</span>
+
+          {/* Trips */}
+          <div className="bg-gradient-to-br from-purple-950/40 to-zinc-900 rounded-xl p-4 border border-purple-900/30">
+            <div className="flex items-center gap-2 mb-2">
+              <svg className="w-4 h-4 text-purple-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>
+              </svg>
+              <span className="text-[10px] font-medium text-purple-400/80 uppercase tracking-wider">Trips</span>
+            </div>
+            <p className="font-mono text-2xl text-white tracking-tight">{stats.tripsRemaining.toLocaleString()}</p>
           </div>
         </div>
 
@@ -447,18 +485,17 @@ export default function Home() {
   );
 }
 
-// Years Grid: Diamonds in 9 rows x 10 columns
+// Years Grid: Squares in 9 rows x 10 columns
 function YearsGrid({ decades }: { decades: Array<{ decade: number; years: Array<{ age: number; status: "past" | "current" | "future" }> }> }) {
   return (
     <div className="h-full flex flex-col justify-center items-center gap-3">
       {decades.map((decadeData) => (
-        <div key={decadeData.decade} className="flex gap-4 items-center">
+        <div key={decadeData.decade} className="flex gap-3">
           {decadeData.years.map((year) => (
             <div
               key={year.age}
               className={cn(
-                "w-10 h-12 rotate-45 cursor-pointer"
-                ,
+                "w-10 h-10 cursor-pointer",
                 year.status === "past" && "bg-red-500",
                 year.status === "current" && "bg-red-400",
                 year.status === "future" && "bg-transparent border-2 border-zinc-700 hover:border-zinc-500"
