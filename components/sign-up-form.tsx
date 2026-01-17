@@ -21,6 +21,7 @@ export function SignUpForm({
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
   const [email, setEmail] = useState("");
+  const [inviteCode, setInviteCode] = useState("");
   const [password, setPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -33,6 +34,26 @@ export function SignUpForm({
     setIsLoading(true);
     setError(null);
 
+    try {
+      const inviteResp = await fetch("/api/invite/validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: inviteCode }),
+      });
+      const inviteData = (await inviteResp.json().catch(() => null)) as
+        | { valid?: boolean; error?: string }
+        | null;
+      if (!inviteResp.ok || !inviteData?.valid) {
+        setError(inviteData?.error || "Invalid invite code.");
+        setIsLoading(false);
+        return;
+      }
+    } catch {
+      setError("Could not validate invite code.");
+      setIsLoading(false);
+      return;
+    }
+
     if (password !== repeatPassword) {
       setError("Passwords do not match");
       setIsLoading(false);
@@ -44,7 +65,7 @@ export function SignUpForm({
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/protected`,
+          emailRedirectTo: `${window.location.origin}/app`,
         },
       });
       if (error) throw error;
@@ -75,6 +96,18 @@ export function SignUpForm({
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="invite-code">Invite code</Label>
+                <Input
+                  id="invite-code"
+                  placeholder="Enter your invite code"
+                  required
+                  value={inviteCode}
+                  onChange={(e) => setInviteCode(e.target.value)}
+                  autoCapitalize="none"
+                  autoComplete="off"
                 />
               </div>
               <div className="grid gap-2">

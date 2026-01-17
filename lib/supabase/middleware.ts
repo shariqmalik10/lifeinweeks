@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { hasEnvVars } from "../utils";
+import { isDevBypassEnabled } from "@/lib/auth/dev";
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
@@ -17,7 +18,8 @@ export async function updateSession(request: NextRequest) {
   // variable. Always create a new one on each request.
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_PUBLISHABLE_OR_ANON_KEY!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+      process.env.SUPABASE_PUBLISHABLE_OR_ANON_KEY!,
     {
       cookies: {
         getAll() {
@@ -47,10 +49,12 @@ export async function updateSession(request: NextRequest) {
   const { data } = await supabase.auth.getClaims();
   const user = data?.claims;
 
-  // Only protect /protected routes - everything else is public
+  // Only protect app routes - everything else is public
   if (
-    request.nextUrl.pathname.startsWith("/protected") &&
-    !user
+    (request.nextUrl.pathname.startsWith("/protected") ||
+      request.nextUrl.pathname.startsWith("/app")) &&
+    !user &&
+    !isDevBypassEnabled()
   ) {
     const url = request.nextUrl.clone();
     url.pathname = "/auth/login";
