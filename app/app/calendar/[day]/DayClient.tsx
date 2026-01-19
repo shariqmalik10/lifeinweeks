@@ -76,7 +76,7 @@ export function DayClient({
         </p>
         <Link
           href="/app/calendar"
-          className="inline-flex rounded-md border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-200 hover:bg-zinc-900"
+          className="inline-flex rounded-md border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-200 hover:bg-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
         >
           Back to week
         </Link>
@@ -91,13 +91,13 @@ export function DayClient({
           <h1 className="text-balance text-2xl font-semibold text-white">
             {title}
           </h1>
-          <p className="text-pretty text-sm text-zinc-400">
+          <p className="text-pretty text-base text-zinc-400">
             Zoomed-in day view. Choose a category, then set each slot.
           </p>
         </div>
         <Link
           href="/app/calendar"
-          className="inline-flex rounded-md border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-200 hover:bg-zinc-900"
+          className="inline-flex rounded-md border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-200 hover:bg-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
         >
           Back to week
         </Link>
@@ -105,7 +105,7 @@ export function DayClient({
 
       <div className="flex flex-col gap-3">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-sm text-zinc-400">Choose your task</span>
+          <span className="text-base text-zinc-400">Choose your task</span>
           <div className="flex flex-wrap gap-2">
             {CATEGORIES.map((cat) => {
               const active = selectedCategory === cat.id;
@@ -115,7 +115,7 @@ export function DayClient({
                   type="button"
                   onClick={() => setSelectedCategory(cat.id)}
                   className={cn(
-                    "rounded-full border px-3 py-1 text-xs",
+                    "rounded-full border px-3 py-1 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 touch-manipulation",
                     active
                       ? "border-zinc-200 bg-zinc-200 text-zinc-950"
                       : "border-zinc-800 bg-zinc-950 text-zinc-200 hover:bg-zinc-900",
@@ -143,7 +143,7 @@ export function DayClient({
                   setCheckInMutation.mutate({ slot, categoryId: selectedCategory })
                 }
                 className={cn(
-                  "rounded-xl border px-4 py-4 text-left",
+                  "rounded-xl border px-4 py-4 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 touch-manipulation",
                   value
                     ? "border-zinc-700 bg-zinc-900 text-zinc-100"
                     : "border-zinc-800 bg-zinc-950 text-zinc-400 hover:bg-zinc-900",
@@ -166,14 +166,14 @@ export function DayClient({
 
         <div className="rounded-xl border border-zinc-800 bg-zinc-950 p-4">
           <div className="text-sm font-medium text-zinc-200">Notes</div>
-          <p className="mt-1 text-pretty text-sm text-zinc-500">
+          <p className="mt-1 text-pretty text-base text-zinc-500">
             Notes are coming next (we’ll attach them to each slot and persist via
             TanStack Query + storage).
           </p>
           <Input
             placeholder="Optional note (coming soon)"
             disabled
-            className="mt-3 h-10 bg-zinc-950 text-zinc-100"
+            className="mt-3 h-10 bg-zinc-950 text-base text-zinc-100"
             aria-label="Notes (coming soon)"
           />
         </div>

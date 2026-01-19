@@ -132,7 +132,7 @@ export default function DashboardPage() {
         <h1 className="text-balance text-2xl font-semibold text-white">
           Your life, in {timeUnit}
         </h1>
-        <p className="text-pretty text-sm text-zinc-400">
+        <p className="text-pretty text-base text-zinc-400">
           This dashboard is a separate, logged-in experience. The public landing
           visualization stays unchanged.
         </p>
@@ -140,25 +140,25 @@ export default function DashboardPage() {
 
       <section className="grid gap-4 md:grid-cols-3">
         <div className="rounded-xl border border-zinc-800 bg-zinc-950 p-4">
-          <div className="text-xs font-medium text-zinc-500">Date of birth</div>
+          <div className="text-sm font-medium text-zinc-500">Date of birth</div>
           <div className="mt-2">
             <Input
               type="date"
               value={isoDate(birthDate)}
               onChange={handleDateChange}
               max={isoDate(new Date())}
-              className="h-10 bg-zinc-950 text-zinc-100"
+              className="h-10 bg-zinc-950 text-base text-zinc-100"
             />
           </div>
         </div>
 
         <div className="rounded-xl border border-zinc-800 bg-zinc-950 p-4">
-          <div className="text-xs font-medium text-zinc-500">Progress</div>
+          <div className="text-sm font-medium text-zinc-500">Progress</div>
           <div className="mt-2 flex items-baseline gap-2">
             <div className="tabular-nums text-4xl font-semibold text-white">
               {Math.round(stats.percentComplete)}%
             </div>
-            <div className="text-sm text-zinc-400">complete</div>
+            <div className="text-base text-zinc-400">complete</div>
           </div>
           <div className="mt-3 h-2 w-full rounded-full bg-zinc-900">
             <div
@@ -169,19 +169,19 @@ export default function DashboardPage() {
         </div>
 
         <div className="rounded-xl border border-zinc-800 bg-zinc-950 p-4">
-          <div className="text-xs font-medium text-zinc-500">Remaining</div>
+          <div className="text-sm font-medium text-zinc-500">Remaining</div>
           <div className="mt-2 grid grid-cols-2 gap-3">
             <div>
               <div className="tabular-nums text-xl font-semibold text-white">
                 {stats.yearsRemaining.toLocaleString()}
               </div>
-              <div className="text-xs text-zinc-500">years</div>
+              <div className="text-sm text-zinc-500">years</div>
             </div>
             <div>
               <div className="tabular-nums text-xl font-semibold text-white">
                 {stats.weeksRemaining.toLocaleString()}
               </div>
-              <div className="text-xs text-zinc-500">weeks</div>
+              <div className="text-sm text-zinc-500">weeks</div>
             </div>
           </div>
         </div>
@@ -193,7 +193,7 @@ export default function DashboardPage() {
             <h2 className="text-balance text-lg font-semibold text-white">
               Visualization
             </h2>
-            <p className="text-pretty text-sm text-zinc-400">
+            <p className="text-pretty text-base text-zinc-400">
               Switch granularity to zoom out.
             </p>
           </div>
@@ -207,7 +207,7 @@ export default function DashboardPage() {
                   type="button"
                   onClick={() => setTimeUnit(unit)}
                   className={cn(
-                    "rounded-md px-3 py-2 text-xs font-medium",
+                    "rounded-md px-3 py-2 text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950",
                     active
                       ? "bg-zinc-200 text-zinc-950"
                       : "text-zinc-300 hover:bg-zinc-900",
@@ -234,7 +234,7 @@ function Cell({ status }: { status: "past" | "current" | "future" }) {
   return (
     <div
       className={cn(
-        "size-3 rounded-sm border",
+        "aspect-square w-full rounded-[6px] border",
         status === "past" && "border-zinc-700 bg-zinc-200",
         status === "current" && "border-zinc-600 bg-zinc-400",
         status === "future" && "border-zinc-800 bg-transparent",
@@ -252,9 +252,13 @@ function YearsGrid({
   }>;
 }) {
   return (
-    <div className="grid gap-3">
+    <div className="grid w-full gap-3">
       {decades.map((decadeData) => (
-        <div key={decadeData.decade} className="flex flex-wrap gap-2">
+        <div
+          key={decadeData.decade}
+          className="grid gap-2"
+          style={{ gridTemplateColumns: "repeat(10, minmax(0, 1fr))" }}
+        >
           {decadeData.years.map((year) => (
             <Cell key={year.age} status={year.status} />
           ))}
@@ -273,9 +277,13 @@ function MonthsGrid({
   }>;
 }) {
   return (
-    <div className="grid gap-1">
+    <div className="grid w-full gap-1">
       {rows.map((row) => (
-        <div key={row.age} className="flex gap-1">
+        <div
+          key={row.age}
+          className="grid gap-1"
+          style={{ gridTemplateColumns: "repeat(12, minmax(0, 1fr))" }}
+        >
           {row.months.map((month) => (
             <Cell key={month.month} status={month.status} />
           ))}
@@ -294,9 +302,13 @@ function WeeksGrid({
   }>;
 }) {
   return (
-    <div className="grid gap-1 overflow-auto">
+    <div className="grid w-full gap-1 overflow-x-auto">
       {rows.map((row) => (
-        <div key={row.age} className="flex gap-1">
+        <div
+          key={row.age}
+          className="grid gap-1"
+          style={{ gridTemplateColumns: "repeat(52, minmax(0, 1fr))" }}
+        >
           {row.weeks.map((week) => (
             <Cell key={week.week} status={week.status} />
           ))}

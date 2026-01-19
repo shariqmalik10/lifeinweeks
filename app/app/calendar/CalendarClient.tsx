@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import {
   CATEGORIES,
@@ -42,6 +43,10 @@ function formatDayTitle(date: Date) {
   return date.toLocaleDateString(undefined, { weekday: "long" });
 }
 
+function formatDayShort(date: Date) {
+  return date.toLocaleDateString(undefined, { weekday: "short" });
+}
+
 function formatRangeTitle(weekStart: Date) {
   const weekEnd = addDays(weekStart, 6);
   const opts: Intl.DateTimeFormatOptions = { month: "short", day: "numeric" };
@@ -60,16 +65,21 @@ function inRange(dayIso: string, weekStart: Date) {
 function ProgressBar({ value, max }: { value: number; max: number }) {
   const pct = max <= 0 ? 0 : Math.min(100, (value / max) * 100);
   return (
-    <div className="mt-2 h-2 w-full rounded-full bg-zinc-900">
-      <div className="h-2 rounded-full bg-zinc-200" style={{ width: `${pct}%` }} />
+    <div className="h-1.5 w-full rounded-full bg-zinc-900/50">
+      <div
+        className="h-1.5 rounded-full bg-zinc-200 transition-all duration-200"
+        style={{ width: `${pct}%` }}
+      />
     </div>
   );
 }
 
 export function CalendarClient({ userKey }: { userKey: string }) {
   const qc = useQueryClient();
+  const router = useRouter();
   const [weekAnchor, setWeekAnchor] = useState(() => new Date());
   const [selectedCategory, setSelectedCategory] = useState<CategoryId>("work");
+  const dayRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   const weekStart = useMemo(() => startOfWeek(weekAnchor), [weekAnchor]);
   const days = useMemo(
@@ -132,14 +142,17 @@ export function CalendarClient({ userKey }: { userKey: string }) {
     return counts as Record<CategoryId, number>;
   }, [checkIns, weekStart]);
 
+  const todayKey = dateKey(new Date());
+
   return (
-    <div className="space-y-8">
-      <div className="flex items-start justify-between gap-4">
-        <div className="space-y-1">
-          <h1 className="text-balance text-2xl font-semibold text-white">
+    <div className="space-y-10">
+      {/* Header */}
+      <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
+        <div className="space-y-2">
+          <h1 className="text-balance text-3xl font-semibold text-white">
             {rangeTitle}
           </h1>
-          <p className="text-pretty text-sm text-zinc-400">
+          <p className="text-pretty text-base text-zinc-400">
             Pick a category, then click a cell to check in. Everything is saved
             locally and cached via TanStack Query.
           </p>
@@ -149,30 +162,40 @@ export function CalendarClient({ userKey }: { userKey: string }) {
           <button
             type="button"
             onClick={() => setWeekAnchor((d) => addDays(d, -7))}
-            className="rounded-md border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-200 hover:bg-zinc-900"
+            className="min-h-[44px] rounded-lg border border-zinc-800 bg-zinc-950 px-4 py-2 text-sm text-zinc-200 transition-colors hover:bg-zinc-900 hover:border-zinc-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 touch-manipulation"
+            aria-label="Previous week"
           >
-            Previous
+            ← Previous
           </button>
           <button
             type="button"
-            onClick={() => setWeekAnchor(() => new Date())}
-            className="rounded-md border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-200 hover:bg-zinc-900"
+            onClick={() => {
+              setWeekAnchor(() => new Date());
+              const target = dayRefs.current[todayKey];
+              setTimeout(() => {
+                target?.scrollIntoView({ behavior: "smooth", block: "center" });
+              }, 100);
+            }}
+            className="min-h-[44px] rounded-lg border border-zinc-800 bg-zinc-950 px-4 py-2 text-sm text-zinc-200 transition-colors hover:bg-zinc-900 hover:border-zinc-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 touch-manipulation"
+            aria-label="Jump to today"
           >
-            Today
+            Jump to Today
           </button>
           <button
             type="button"
             onClick={() => setWeekAnchor((d) => addDays(d, 7))}
-            className="rounded-md border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-200 hover:bg-zinc-900"
+            className="min-h-[44px] rounded-lg border border-zinc-800 bg-zinc-950 px-4 py-2 text-sm text-zinc-200 transition-colors hover:bg-zinc-900 hover:border-zinc-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 touch-manipulation"
+            aria-label="Next week"
           >
-            Next
+            Next →
           </button>
         </div>
       </div>
 
-      <div className="space-y-3">
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="text-sm text-zinc-400">Choose your task</span>
+      {/* Category Selection */}
+      <div className="space-y-4">
+        <div className="flex flex-wrap items-center gap-3">
+          <span className="text-base font-medium text-zinc-300">Choose your task</span>
           <div className="flex flex-wrap gap-2">
             {CATEGORIES.map((cat) => {
               const active = selectedCategory === cat.id;
@@ -182,11 +205,12 @@ export function CalendarClient({ userKey }: { userKey: string }) {
                   type="button"
                   onClick={() => setSelectedCategory(cat.id)}
                   className={cn(
-                    "rounded-full border px-3 py-1 text-xs",
+                    "min-h-[44px] rounded-lg border px-4 py-2 text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 touch-manipulation",
                     active
                       ? "border-zinc-200 bg-zinc-200 text-zinc-950"
-                      : "border-zinc-800 bg-zinc-950 text-zinc-200 hover:bg-zinc-900",
+                      : "border-zinc-800 bg-zinc-950 text-zinc-200 hover:bg-zinc-900 hover:border-zinc-700",
                   )}
+                  aria-pressed={active}
                 >
                   {cat.label}
                 </button>
@@ -196,48 +220,59 @@ export function CalendarClient({ userKey }: { userKey: string }) {
         </div>
 
         <div className="flex items-center justify-between gap-3">
-          <div className="text-sm text-zinc-400">View</div>
-          <Link
-            href={`/app/calendar/${dateKey(new Date())}`}
-            className="inline-flex rounded-md border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-200 hover:bg-zinc-900"
+          <span className="text-base font-medium text-zinc-300">View</span>
+          <button
+            type="button"
+            onClick={() => router.push(`/app/calendar/${todayKey}`)}
+            className="min-h-[44px] rounded-lg border border-zinc-800 bg-zinc-200 px-4 py-2 text-sm font-medium text-zinc-950 transition-colors hover:bg-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 touch-manipulation"
           >
             Zoom to today
-          </Link>
+          </button>
         </div>
+      </div>
 
-        <div className="grid gap-2 md:grid-cols-[140px_1fr]">
-          <div className="hidden md:block" />
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 md:grid-cols-7">
-            {days.map((day) => {
-              const k = dateKey(day);
-              return (
-                <Link
-                  key={k}
-                  href={`/app/calendar/${k}`}
-                  className="rounded-md px-2 py-1 text-left text-sm text-zinc-200 hover:bg-zinc-900"
-                >
-                  <div className="text-sm font-medium">{formatDayTitle(day)}</div>
-                  <div className="text-xs text-zinc-500 tabular-nums">
-                    {day.toLocaleDateString(undefined, { month: "short", day: "numeric" })}
+      {/* Mobile: Stacked Day Cards */}
+      <div className="space-y-4 md:hidden">
+        {days.map((day) => {
+          const k = dateKey(day);
+          const isToday = k === todayKey;
+          return (
+            <div
+              key={k}
+              ref={(node) => {
+                dayRefs.current[k] = node;
+              }}
+              className={cn(
+                "rounded-xl border bg-zinc-950 p-5 transition-colors",
+                isToday
+                  ? "border-zinc-500 bg-zinc-900/50"
+                  : "border-zinc-800",
+              )}
+            >
+              <div className="mb-4 flex items-center justify-between">
+                <div>
+                  <div className="text-lg font-semibold text-zinc-100">
+                    {formatDayTitle(day)}
                   </div>
+                  <div className="mt-0.5 text-sm text-zinc-500 tabular-nums">
+                    {day.toLocaleDateString(undefined, {
+                      month: "short",
+                      day: "numeric",
+                    })}
+                  </div>
+                </div>
+                <Link
+                  href={`/app/calendar/${k}`}
+                  className="min-h-[44px] rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-xs font-medium text-zinc-200 transition-colors hover:bg-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 touch-manipulation"
+                >
+                  Open
                 </Link>
-              );
-            })}
-          </div>
-
-          {SLOTS.map((slot) => (
-            <div key={slot} className="grid gap-2 md:grid-cols-[140px_1fr]">
-              <div className="flex items-center justify-between md:justify-start">
-                <div className="text-sm font-medium text-zinc-300">{slot}</div>
               </div>
-              <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 md:grid-cols-7">
-                {days.map((day) => {
-                  const k = dateKey(day);
+              <div className="grid gap-3">
+                {SLOTS.map((slot) => {
                   const value = checkIns[k]?.[slot] ?? null;
-                  const label =
-                    value == null
-                      ? "Empty"
-                      : CATEGORIES.find((c) => c.id === value)?.label ?? "Set";
+                  const category = value ? CATEGORIES.find((c) => c.id === value) : null;
+                  const label = category?.label ?? "Empty";
                   return (
                     <button
                       key={`${k}:${slot}`}
@@ -250,48 +285,148 @@ export function CalendarClient({ userKey }: { userKey: string }) {
                         })
                       }
                       className={cn(
-                        "min-h-16 rounded-lg border px-3 py-2 text-left",
+                        "min-h-[60px] rounded-lg border px-4 py-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 touch-manipulation",
                         value
-                          ? "border-zinc-700 bg-zinc-900 text-zinc-100"
-                          : "border-zinc-800 bg-zinc-950 text-zinc-400 hover:bg-zinc-900",
+                          ? "border-zinc-700 bg-zinc-900/50 text-zinc-100 hover:bg-zinc-900"
+                          : "border-zinc-800 bg-zinc-950 text-zinc-400 hover:bg-zinc-900 hover:border-zinc-700",
                       )}
                     >
-                      <div className="text-sm">{label}</div>
-                      <div className="mt-1 text-xs text-zinc-500">
-                        Click to set
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium">{slot}</span>
+                        <span className="text-sm font-medium">{label}</span>
                       </div>
+                      {!value && (
+                        <div className="mt-1 text-xs text-zinc-500">Tap to set</div>
+                      )}
                     </button>
                   );
                 })}
               </div>
             </div>
-          ))}
+          );
+        })}
+      </div>
+
+      {/* Desktop: Week Grid */}
+      <div className="hidden md:block">
+        <div className="overflow-x-auto">
+          <div className="inline-block min-w-full">
+            <div className="grid gap-3" style={{ gridTemplateColumns: "160px repeat(7, 1fr)" }}>
+              {/* Empty corner */}
+              <div className="hidden md:block" />
+
+              {/* Day headers */}
+              {days.map((day) => {
+                const k = dateKey(day);
+                const isToday = k === todayKey;
+                return (
+                  <div
+                    key={k}
+                    ref={(node) => {
+                      dayRefs.current[k] = node;
+                    }}
+                    className={cn(
+                      "rounded-lg border px-3 py-3 text-center transition-colors",
+                      isToday
+                        ? "border-zinc-500 bg-zinc-900/50"
+                        : "border-zinc-800 bg-zinc-950",
+                    )}
+                  >
+                    <Link
+                      href={`/app/calendar/${k}`}
+                      className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+                    >
+                      <div className="text-sm font-semibold text-zinc-100">
+                        {formatDayShort(day)}
+                      </div>
+                      <div className="mt-1 text-xs text-zinc-500 tabular-nums">
+                        {day.toLocaleDateString(undefined, {
+                          month: "short",
+                          day: "numeric",
+                        })}
+                      </div>
+                    </Link>
+                  </div>
+                );
+              })}
+
+              {/* Time slot rows */}
+              {SLOTS.map((slot) => (
+                <div key={slot} className="contents">
+                  <div className="flex items-center justify-start px-2">
+                    <div className="text-base font-medium uppercase text-zinc-300">
+                      {slot}
+                    </div>
+                  </div>
+                  {days.map((day) => {
+                    const k = dateKey(day);
+                    const value = checkIns[k]?.[slot] ?? null;
+                    const category = value ? CATEGORIES.find((c) => c.id === value) : null;
+                    const label = category?.label ?? "Empty";
+                    return (
+                      <button
+                        key={`${k}:${slot}`}
+                        type="button"
+                        onClick={() =>
+                          setCheckInMutation.mutate({
+                            dayKey: k,
+                            slot,
+                            categoryId: selectedCategory,
+                          })
+                        }
+                        className={cn(
+                          "min-h-[100px] rounded-lg border px-3 py-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 touch-manipulation",
+                          value
+                            ? "border-zinc-700 bg-zinc-900/50 text-zinc-100 hover:bg-zinc-900"
+                            : "border-zinc-800 bg-zinc-950 text-zinc-400 hover:bg-zinc-900 hover:border-zinc-700",
+                        )}
+                      >
+                        <div className="text-sm font-medium">{label}</div>
+                        {!value && (
+                          <div className="mt-1 text-xs text-zinc-500">Click to set</div>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 
-      <section className="space-y-3">
-        <h2 className="text-balance text-lg font-semibold text-white">
-          Weekly goals
+      {/* Weekly Goals */}
+      <section className="space-y-4">
+        <h2 className="text-balance text-xl font-semibold text-white">
+          Weekly Goals
         </h2>
-        <div className="grid gap-3 md:grid-cols-2">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {CATEGORIES.map((cat) => {
             const done = weeklyCounts[cat.id] ?? 0;
             const target = Math.max(0, Number(goals[cat.id] ?? 0));
+            const isComplete = target > 0 && done >= target;
             return (
               <div
                 key={cat.id}
-                className="rounded-xl border border-zinc-800 bg-zinc-950 p-4"
+                className="rounded-xl border border-zinc-800 bg-zinc-950 p-5"
               >
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <div className="text-sm font-medium text-zinc-200">
-                      {cat.label}
+                <div className="mb-3 flex items-start justify-between gap-4">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <div className="text-base font-medium text-zinc-200">
+                        {cat.label}
+                      </div>
+                      {isComplete && (
+                        <span className="text-zinc-400" aria-label="Goal completed">
+                          ✓
+                        </span>
+                      )}
                     </div>
-                    <div className="mt-1 text-xs text-zinc-500 tabular-nums">
+                    <div className="mt-1 text-sm text-zinc-500 tabular-nums">
                       {done} / {target || 0} times
                     </div>
                   </div>
-                  <div className="w-24">
+                  <div className="w-20 shrink-0">
                     <Input
                       type="number"
                       min={0}
@@ -304,7 +439,7 @@ export function CalendarClient({ userKey }: { userKey: string }) {
                           target: Math.max(0, Number(e.target.value || 0)),
                         })
                       }
-                      className="h-9 bg-zinc-950 text-zinc-100 tabular-nums"
+                      className="h-10 bg-zinc-900 text-base text-zinc-100 tabular-nums focus:bg-zinc-800"
                       aria-label={`${cat.label} weekly target`}
                     />
                   </div>
