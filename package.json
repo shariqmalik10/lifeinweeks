@@ -30,7 +30,8 @@
     "react-dom": "^19.0.0",
     "tailwind-merge": "^3.3.0",
     "tldraw": "^3.15.4",
-    "zod": "^4.1.9"
+    "zod": "^4.1.9",
+    "zustand": "^5.0.10"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
