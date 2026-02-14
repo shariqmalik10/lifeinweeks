@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { BirthDatePicker } from "@/components/birth-date-picker";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
@@ -187,11 +188,8 @@ export default function Home() {
     }
   }, [birthDate, lifespan, timeUnit]);
 
-  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const date = new Date(e.target.value);
-    if (!isNaN(date.getTime())) {
-      setBirthDate(date);
-    }
+  const handleDateChange = (date: Date) => {
+    setBirthDate(date);
   };
 
   // Stoic insight quote
@@ -218,12 +216,9 @@ export default function Home() {
           <label className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider block mb-2">
             Date of Birth
           </label>
-          <Input
-            type="date"
-            value={birthDate.toISOString().split("T")[0]}
+          <BirthDatePicker
+            value={birthDate}
             onChange={handleDateChange}
-            className="w-full h-10 text-sm bg-zinc-900 border-zinc-700 text-white"
-            max={new Date().toISOString().split("T")[0]}
           />
         </div>
 

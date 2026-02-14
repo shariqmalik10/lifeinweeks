@@ -3,10 +3,8 @@
 import { useMemo, useState } from "react";
 import { Sunrise, Calendar, Clock, Plane } from "lucide-react";
 import { LifeGrid } from "@/components/life-grid";
-import { MiniCalendar } from "@/components/mini-calendar";
-import { TodaySection } from "@/components/today-section";
+import { BirthDatePicker } from "@/components/birth-date-picker";
 import { useAppStore } from "@/lib/store";
-import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
 type TimeUnit = "years" | "months" | "weeks";
@@ -58,32 +56,23 @@ export default function OverviewPage() {
     };
   }, [birthDate, lifespan]);
 
-  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const date = e.target.value;
-    if (date) {
-      updateProfile({ birth_date: date });
-    }
-  };
-
-  const formatDate = (date: Date) => {
-    return date.toISOString().slice(0, 10);
+  const handleDateChange = (date: Date) => {
+    const iso = date.toISOString().slice(0, 10);
+    updateProfile({ birth_date: iso });
   };
 
   return (
-    <div className="flex h-full gap-8">
+    <div className="flex h-[calc(100dvh-4rem)] gap-8">
       {/* Left sidebar - Stats */}
-      <div className="w-64 shrink-0 space-y-8">
-        {/* Date of birth input */}
+      <div className="w-64 shrink-0 space-y-8 overflow-y-auto">
+        {/* Date of birth picker */}
         <div className="space-y-2">
           <label className="text-xs uppercase tracking-wider text-muted-foreground">
             Date of Birth
           </label>
-          <Input
-            type="date"
-            value={formatDate(birthDate)}
+          <BirthDatePicker
+            value={birthDate}
             onChange={handleDateChange}
-            max={new Date().toISOString().slice(0, 10)}
-            className="bg-card border-border text-foreground"
           />
         </div>
 
@@ -156,7 +145,7 @@ export default function OverviewPage() {
       </div>
 
       {/* Right side - Life Grid */}
-      <div className="flex-1 overflow-hidden">
+      <div className="flex-1 min-h-0 min-w-0">
         <LifeGrid
           birthDate={birthDate}
           lifespanYears={lifespan}

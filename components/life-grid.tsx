@@ -24,7 +24,6 @@ export function LifeGrid({ birthDate, lifespanYears = 90, timeUnit = "weeks" }: 
     const ageInYears = currentYear - birthYear;
 
     if (timeUnit === "years") {
-      // 9 rows × 10 columns for years view
       const decades: Array<{
         decade: number;
         years: Array<{ age: number; status: CellStatus }>;
@@ -41,11 +40,10 @@ export function LifeGrid({ birthDate, lifespanYears = 90, timeUnit = "weeks" }: 
         }
         decades.push({ decade, years });
       }
-      return { type: "years" as const, decades, columns: 10 };
+      return { type: "years" as const, decades };
     }
 
     if (timeUnit === "months") {
-      // Each row = 1 year, 12 columns for months
       const rows: Array<{
         age: number;
         months: Array<{ month: number; status: CellStatus }>;
@@ -65,10 +63,10 @@ export function LifeGrid({ birthDate, lifespanYears = 90, timeUnit = "weeks" }: 
         }
         rows.push({ age, months });
       }
-      return { type: "months" as const, rows, columns: 12 };
+      return { type: "months" as const, rows };
     }
 
-    // Weeks view - 52 columns
+    // Weeks view
     const rows: Array<{
       age: number;
       weeks: Array<{ week: number; status: CellStatus }>;
@@ -88,117 +86,151 @@ export function LifeGrid({ birthDate, lifespanYears = 90, timeUnit = "weeks" }: 
       }
       rows.push({ age, weeks });
     }
-    return { type: "weeks" as const, rows, columns: 52 };
+    return { type: "weeks" as const, rows };
   }, [birthDate, lifespanYears, timeUnit]);
 
-  // Column headers for weeks view
-  const columnHeaders = useMemo(() => {
-    if (timeUnit !== "weeks") return null;
-    // Show every 5th week number
-    return Array.from({ length: 11 }, (_, i) => (i + 1) * 5);
-  }, [timeUnit]);
-
   return (
-    <div className="h-full flex flex-col">
-      {/* Column headers for weeks */}
-      {columnHeaders && (
-        <div 
-          className="grid mb-1 text-[10px] text-muted-foreground tabular-nums"
-          style={{ gridTemplateColumns: `24px repeat(52, 1fr)` }}
-        >
-          <div /> {/* Empty cell for row labels column */}
-          {Array.from({ length: 52 }, (_, i) => (
-            <div key={i} className="text-center">
-              {(i + 1) % 5 === 0 ? i + 1 : ""}
+    <div className="h-full flex">
+      {/* Age axis labels */}
+      {gridData.type === "weeks" && (
+        <div className="flex flex-col pr-2 shrink-0 pt-5">
+          {gridData.rows.map((row) => (
+            <div key={row.age} className="flex-1 flex items-center justify-end min-h-0">
+              {row.age % 5 === 0 && (
+                <span className="text-[10px] text-muted-foreground font-mono leading-none">
+                  {row.age}
+                </span>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+      {gridData.type === "months" && (
+        <div className="flex flex-col pr-2 shrink-0 pt-5">
+          {gridData.rows.map((row) => (
+            <div key={row.age} className="flex-1 flex items-center justify-end min-h-0">
+              {row.age % 10 === 0 && (
+                <span className="text-[10px] text-muted-foreground font-mono leading-none">
+                  {row.age}
+                </span>
+              )}
             </div>
           ))}
         </div>
       )}
 
-      {/* Grid */}
-      <div className="flex-1 overflow-auto">
-        {gridData.type === "years" && (
-          <div className="grid gap-1">
-            {gridData.decades.map((decade) => (
-              <div
-                key={decade.decade}
-                className="grid gap-1"
-                style={{ gridTemplateColumns: `repeat(${gridData.columns}, 1fr)` }}
-              >
-                {decade.years.map((year) => (
-                  <GridCell key={year.age} status={year.status} size="large" />
-                ))}
-              </div>
-            ))}
-          </div>
-        )}
-
-        {gridData.type === "months" && (
-          <div className="grid gap-px">
-            {gridData.rows.map((row) => (
-              <div
-                key={row.age}
-                className="grid gap-px"
-                style={{ gridTemplateColumns: `24px repeat(${gridData.columns}, 1fr)` }}
-              >
-                {/* Row label */}
-                <div className="flex items-center justify-end pr-2 text-[10px] tabular-nums text-muted-foreground">
-                  {row.age % 10 === 0 ? row.age : ""}
-                </div>
-                {row.months.map((cell) => (
-                  <GridCell key={cell.month} status={cell.status} size="medium" />
-                ))}
-              </div>
-            ))}
-          </div>
-        )}
-
+      <div className="flex-1 flex flex-col min-h-0">
+        {/* Column header labels */}
         {gridData.type === "weeks" && (
-          <div className="grid gap-px">
-            {gridData.rows.map((row) => (
-              <div
-                key={row.age}
-                className="grid gap-px"
-                style={{ gridTemplateColumns: `24px repeat(${gridData.columns}, 1fr)` }}
-              >
-                {/* Row label - show every 5 years */}
-                <div className="flex items-center justify-end pr-2 text-[10px] tabular-nums text-muted-foreground">
-                  {row.age % 5 === 0 ? row.age : ""}
-                </div>
-                {row.weeks.map((cell) => (
-                  <GridCell key={cell.week} status={cell.status} size="small" />
-                ))}
+          <div className="flex mb-1 shrink-0 h-4">
+            {Array.from({ length: 52 }, (_, i) => i + 1).map((week) => (
+              <div key={week} className="flex-1 min-w-0 flex justify-center">
+                {week === 1 || week % 5 === 0 ? (
+                  <span className="text-[10px] text-muted-foreground font-mono leading-none">
+                    {week}
+                  </span>
+                ) : null}
               </div>
             ))}
           </div>
         )}
+        {gridData.type === "months" && (
+          <div className="flex mb-1 shrink-0 h-4">
+            {Array.from({ length: 12 }, (_, i) => i + 1).map((month) => (
+              <div key={month} className="flex-1 min-w-0 flex justify-center">
+                <span className="text-[10px] text-muted-foreground font-mono leading-none">
+                  {month}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Grid */}
+        <div className="flex-1 min-h-0">
+          {gridData.type === "years" && (
+            <YearsGrid decades={gridData.decades} />
+          )}
+          {gridData.type === "months" && (
+            <MonthsGrid rows={gridData.rows} />
+          )}
+          {gridData.type === "weeks" && (
+            <WeeksGrid rows={gridData.rows} />
+          )}
+        </div>
       </div>
     </div>
   );
 }
 
-interface GridCellProps {
-  status: CellStatus;
-  size: "small" | "medium" | "large";
-}
-
-function GridCell({ status, size }: GridCellProps) {
-  const sizeClasses = {
-    small: "size-[6px]",
-    medium: "size-3",
-    large: "size-6",
-  };
-
+// Years Grid: Squares in 9 rows x 10 columns
+function YearsGrid({ decades }: { decades: Array<{ decade: number; years: Array<{ age: number; status: CellStatus }> }> }) {
   return (
-    <div
-      className={cn(
-        "rounded-[1px]",
-        sizeClasses[size],
-        status === "past" && "bg-primary",
-        status === "current" && "bg-primary ring-1 ring-white/50",
-        status === "future" && "bg-secondary border border-border"
-      )}
-    />
+    <div className="h-full flex flex-col justify-center items-center gap-3">
+      {decades.map((decadeData) => (
+        <div key={decadeData.decade} className="flex gap-3">
+          {decadeData.years.map((year) => (
+            <div
+              key={year.age}
+              className={cn(
+                "w-10 h-10 cursor-pointer",
+                year.status === "past" && "bg-primary",
+                year.status === "current" && "bg-primary/80",
+                year.status === "future" && "bg-transparent border-2 border-border hover:border-muted-foreground"
+              )}
+              title={`Age ${year.age}`}
+            />
+          ))}
+        </div>
+      ))}
+    </div>
   );
 }
 
+// Months Grid: Circles in 90 rows x 12 columns
+function MonthsGrid({ rows }: { rows: Array<{ age: number; months: Array<{ month: number; status: CellStatus }> }> }) {
+  return (
+    <div className="h-full flex flex-col gap-[2px]">
+      {rows.map((row) => (
+        <div key={row.age} className="flex gap-[2px] flex-1 min-h-0">
+          {row.months.map((month) => (
+            <div
+              key={month.month}
+              className={cn(
+                "flex-1 min-w-0 rounded-full cursor-pointer",
+                month.status === "past" && "bg-primary",
+                month.status === "current" && "bg-primary/80",
+                month.status === "future" && "bg-transparent border border-border hover:border-muted-foreground"
+              )}
+              title={`Age ${row.age}, Month ${month.month + 1}`}
+            />
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// Weeks Grid: Squares in 90 rows x 52 columns
+function WeeksGrid({ rows }: { rows: Array<{ age: number; weeks: Array<{ week: number; status: CellStatus }> }> }) {
+  return (
+    <div className="h-full flex flex-col gap-[1px]">
+      {rows.map((row) => (
+        <div key={row.age} className="flex gap-[1px] flex-1 min-h-0">
+          {row.weeks.map((week) => (
+            <div
+              key={week.week}
+              className={cn(
+                "flex-1 min-w-0 cursor-pointer bg-transparent border",
+                week.status === "past" && "bg-primary",
+                week.status === "current" && "bg-primary/80",
+                week.status === "future" && ""
+              )}
+              title={`Age ${row.age}, Week ${week.week + 1}`}
+            />
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
