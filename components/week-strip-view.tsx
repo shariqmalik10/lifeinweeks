@@ -107,8 +107,8 @@ export function WeekStripView({ onDateSelect }: WeekStripViewProps) {
 
   return (
     <div className="space-y-6">
-      {/* Main container - dark themed */}
-      <div className="rounded-2xl bg-zinc-800 p-6 text-white dark:bg-zinc-900">
+      {/* Main container - uses theme colors */}
+      <div className="rounded-2xl bg-card p-6 text-foreground border border-border">
         {/* Day name header */}
         <h2 className="text-2xl font-bold uppercase tracking-tight">
           {currentDayName}
@@ -117,7 +117,7 @@ export function WeekStripView({ onDateSelect }: WeekStripViewProps) {
         {/* Upcoming tasks section */}
         {upcomingTasks.length > 0 && (
           <div className="mt-6">
-            <div className="flex items-center gap-2 text-sm text-zinc-400">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Calendar className="size-4" />
               <span>Upcoming tasks</span>
             </div>
@@ -142,10 +142,10 @@ export function WeekStripView({ onDateSelect }: WeekStripViewProps) {
                   onClick={() => handleDayClick(date)}
                   className={cn(
                     "relative flex flex-1 flex-col items-center gap-1 rounded-xl px-2 py-4 transition-colors",
-                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-800",
+                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card",
                     isSelected
-                      ? "bg-zinc-950"
-                      : "text-zinc-400 hover:text-white"
+                      ? "bg-background"
+                      : "text-muted-foreground hover:text-foreground"
                   )}
                 >
                   {/* Animated dot indicator */}
@@ -153,7 +153,7 @@ export function WeekStripView({ onDateSelect }: WeekStripViewProps) {
                     {isSelected && (
                       <motion.div
                         layoutId="weekDot"
-                        className="absolute -top-0.5 left-1/2 size-1.5 -translate-x-1/2 rounded-full bg-red-500"
+                        className="absolute -top-0.5 left-1/2 size-1.5 -translate-x-1/2 rounded-full bg-primary"
                         initial={{ scale: 0, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
                         exit={{ scale: 0, opacity: 0 }}
@@ -169,7 +169,7 @@ export function WeekStripView({ onDateSelect }: WeekStripViewProps) {
                   {/* Month */}
                   <span className={cn(
                     "text-[10px] font-medium uppercase tracking-wider",
-                    isSelected ? "text-white" : "text-zinc-500"
+                    isSelected ? "text-foreground" : "text-muted-foreground"
                   )}>
                     {MONTHS[date.getMonth()]}
                   </span>
@@ -177,7 +177,7 @@ export function WeekStripView({ onDateSelect }: WeekStripViewProps) {
                   {/* Day number */}
                   <span className={cn(
                     "text-xl font-semibold tabular-nums",
-                    isSelected ? "text-white" : "text-zinc-300"
+                    isSelected ? "text-foreground" : "text-foreground/70"
                   )}>
                     {date.getDate()}
                   </span>
@@ -185,7 +185,7 @@ export function WeekStripView({ onDateSelect }: WeekStripViewProps) {
                   {/* Day abbreviation */}
                   <span className={cn(
                     "text-xs font-medium uppercase",
-                    isSelected ? "text-white" : "text-zinc-500"
+                    isSelected ? "text-foreground" : "text-muted-foreground"
                   )}>
                     {DAYS[date.getDay()]}
                   </span>
@@ -245,10 +245,10 @@ function TaskCard({ task, today }: TaskCardProps) {
     <motion.div
       initial={{ opacity: 0, y: 4 }}
       animate={{ opacity: 1, y: 0 }}
-      className="rounded-xl border border-zinc-700 bg-zinc-800/50 p-4"
+      className="rounded-xl border border-border bg-secondary/50 p-4"
     >
-      <div className="font-medium text-white">{task.title}</div>
-      <div className="mt-1 text-sm text-zinc-400">
+      <div className="font-medium text-foreground">{task.title}</div>
+      <div className="mt-1 text-sm text-muted-foreground">
         {getRelativeDay()}
         {task.time && `, ${formatTime(task.time)}`}
       </div>

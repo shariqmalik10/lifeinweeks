@@ -31,9 +31,9 @@ interface PlannerCalendarProps {
 }
 
 const priorityColors: Record<TaskPriority, string> = {
-  high: "bg-red-100 text-red-700 border-red-200",
-  medium: "bg-amber-100 text-amber-700 border-amber-200",
-  low: "bg-green-100 text-green-700 border-green-200",
+  high: "bg-red-500/20 text-red-400 border-red-500/30",
+  medium: "bg-amber-500/20 text-amber-400 border-amber-500/30",
+  low: "bg-green-500/20 text-green-400 border-green-500/30",
 };
 
 export function PlannerCalendar({ onDateSelect, viewMode = "month" }: PlannerCalendarProps) {

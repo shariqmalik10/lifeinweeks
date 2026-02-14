@@ -122,17 +122,14 @@ export function AppSidebar({ userEmail }: AppSidebarProps) {
 
   return (
     <aside className="fixed inset-y-0 left-0 z-30 flex w-[var(--sidebar-width)] flex-col border-r border-border bg-card">
-      {/* Logo */}
-      <div className="flex flex-col justify-center px-6 pb-4 pt-6">
+      {/* Logo - matching landing page style */}
+      <div className="flex flex-col justify-center px-6 pb-6 pt-8">
         <Link href="/app" className="flex flex-col">
-          <span className="text-2xl font-bold uppercase leading-none tracking-tight text-foreground">
-            Life
+          <span className="text-2xl font-light tracking-tight text-foreground">
+            Life in
           </span>
-          <span className="text-2xl font-bold uppercase leading-none tracking-tight text-foreground">
-            In Weeks
-          </span>
-          <span className="mt-2 text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-            Visual Life Planner
+          <span className="font-serif text-3xl italic text-primary">
+            Weeks.
           </span>
         </Link>
       </div>

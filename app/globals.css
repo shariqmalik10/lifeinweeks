@@ -66,71 +66,68 @@
 }
 
 @layer base {
-  /* Light mode - primary theme matching the design */
+  /* Dark mode - primary theme matching the landing page */
   :root {
-    --background: 40 33% 98%; /* Warm cream #faf8f5 */
-    --foreground: 20 14% 20%; /* Warm dark #3d3630 */
-    --card: 0 0% 100%; /* White */
-    --card-foreground: 20 14% 20%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 20 14% 20%;
-    --primary: 24 95% 53%; /* Orange #f97316 - main accent */
+    --background: 0 0% 7%; /* Near black #121212 */
+    --foreground: 0 0% 95%; /* Off white #f2f2f2 */
+    --card: 0 0% 10%; /* Dark card #1a1a1a */
+    --card-foreground: 0 0% 95%;
+    --popover: 0 0% 10%;
+    --popover-foreground: 0 0% 95%;
+    --primary: 0 72% 51%; /* Red #dc2626 - main accent matching landing */
     --primary-foreground: 0 0% 100%;
-    --secondary: 40 20% 94%; /* Warm light #f5f1eb */
-    --secondary-foreground: 20 14% 20%;
-    --muted: 40 20% 94%;
-    --muted-foreground: 20 10% 50%; /* Warm gray */
-    --accent: 24 95% 53%; /* Orange */
+    --secondary: 0 0% 14%; /* Dark secondary #242424 */
+    --secondary-foreground: 0 0% 95%;
+    --muted: 0 0% 14%;
+    --muted-foreground: 0 0% 55%; /* Gray text */
+    --accent: 0 72% 51%; /* Red */
     --accent-foreground: 0 0% 100%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --border: 30 15% 88%; /* Warm border #e5e0d8 */
-    --input: 30 15% 88%;
-    --ring: 24 95% 53%;
-    /* Grid specific colors */
-    --grid-past: 220 13% 26%; /* Dark slate for past weeks #3d4451 */
-    --grid-future: 40 20% 94%; /* Light cream for future */
-    --grid-future-border: 30 15% 80%;
-    --grid-current: 24 95% 53%; /* Orange for current week */
-    --radius: 0.625rem;
+    --border: 0 0% 18%; /* Subtle border #2e2e2e */
+    --input: 0 0% 18%;
+    --ring: 0 72% 51%;
+    /* Grid specific colors - RED for past/current */
+    --grid-past: 0 72% 51%; /* Red for lived weeks */
+    --grid-future: 0 0% 14%; /* Dark for future */
+    --grid-future-border: 0 0% 25%;
+    --grid-current: 0 72% 51%; /* Red for current week */
+    --radius: 0.5rem;
     /* Sidebar */
-    --sidebar-width: 260px;
+    --sidebar-width: 280px;
     /* Goal colors */
-    --goal-orange: 24 95% 53%;
+    --goal-red: 0 72% 51%;
     --goal-blue: 217 91% 60%;
     --goal-green: 142 71% 45%;
     --goal-purple: 270 70% 60%;
   }
-  /* Dark mode */
-  :root[data-theme="dark"] {
-    --background: 240 10% 3.9%; /* Zinc 950 #09090b */
-    --foreground: 240 5% 90%; /* Zinc 200 #e4e4e7 */
-    --card: 240 6% 10%; /* Zinc 900 #18181b */
-    --card-foreground: 240 5% 90%;
-    --popover: 240 6% 10%;
-    --popover-foreground: 240 5% 90%;
-    --primary: 24 95% 53%; /* Orange */
+  /* Light mode - optional, for accessibility */
+  :root[data-theme="light"] {
+    --background: 0 0% 98%;
+    --foreground: 0 0% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 10%;
+    --primary: 0 72% 51%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 240 4% 16%; /* Zinc 800 #27272a */
-    --secondary-foreground: 240 5% 90%;
-    --muted: 240 4% 16%;
-    --muted-foreground: 240 4% 46%; /* Zinc 500 #71717a */
-    --accent: 24 95% 53%;
+    --secondary: 0 0% 94%;
+    --secondary-foreground: 0 0% 10%;
+    --muted: 0 0% 94%;
+    --muted-foreground: 0 0% 45%;
+    --accent: 0 72% 51%;
     --accent-foreground: 0 0% 100%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 4% 16%;
-    --input: 240 4% 16%;
-    --ring: 24 95% 53%;
-    /* Grid specific colors */
-    --grid-past: 220 13% 75%;
-    --grid-future: 240 6% 10%;
-    --grid-future-border: 240 4% 30%;
-    --grid-current: 24 95% 53%;
-    /* Sidebar */
-    --sidebar-width: 260px;
-    /* Goal colors */
-    --goal-orange: 24 95% 53%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 88%;
+    --input: 0 0% 88%;
+    --ring: 0 72% 51%;
+    --grid-past: 0 72% 51%;
+    --grid-future: 0 0% 94%;
+    --grid-future-border: 0 0% 80%;
+    --grid-current: 0 72% 51%;
+    --sidebar-width: 280px;
+    --goal-red: 0 72% 51%;
     --goal-blue: 217 91% 60%;
     --goal-green: 142 71% 45%;
     --goal-purple: 270 70% 60%;

@@ -27,23 +27,23 @@ import {
 
 const colorStyles: Record<GoalColor, { border: string; bg: string; progress: string }> = {
   orange: {
-    border: "border-orange-200",
-    bg: "bg-orange-50",
+    border: "border-orange-500/50",
+    bg: "bg-orange-500/20",
     progress: "bg-orange-500",
   },
   blue: {
-    border: "border-blue-200",
-    bg: "bg-blue-50",
+    border: "border-blue-500/50",
+    bg: "bg-blue-500/20",
     progress: "bg-blue-500",
   },
   green: {
-    border: "border-green-200",
-    bg: "bg-green-50",
+    border: "border-green-500/50",
+    bg: "bg-green-500/20",
     progress: "bg-green-500",
   },
   purple: {
-    border: "border-purple-200",
-    bg: "bg-purple-50",
+    border: "border-purple-500/50",
+    bg: "bg-purple-500/20",
     progress: "bg-purple-500",
   },
 };
