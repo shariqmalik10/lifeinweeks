@@ -192,7 +192,7 @@ function ScrollColumn({
 }: ScrollColumnProps) {
   const listRef = useRef<HTMLDivElement>(null);
   const suppressRef = useRef(false);
-  const timeoutRef = useRef<ReturnType<typeof setTimeout>>();
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const pad = Math.floor(VISIBLE / 2) * ITEM_H; // 3 items of padding
 
