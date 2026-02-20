@@ -28,7 +28,7 @@ export function Dialog({ open, onOpenChange, children }: DialogProps) {
     <div className="fixed inset-0 z-50">
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/50"
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm animate-in fade-in-0 duration-200"
         onClick={() => onOpenChange(false)}
         aria-hidden="true"
       />
@@ -56,8 +56,8 @@ export function DialogContent({
       role="dialog"
       aria-modal="true"
       className={cn(
-        "relative w-full max-w-md rounded-xl border border-border bg-card p-6 shadow-lg",
-        "animate-in fade-in-0 zoom-in-95 duration-150",
+        "relative w-full max-w-md max-h-[85vh] overflow-y-auto rounded-xl border border-border bg-card p-6 shadow-lg",
+        "animate-in fade-in-0 zoom-in-95 duration-200",
         className
       )}
     >

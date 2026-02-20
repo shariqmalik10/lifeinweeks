@@ -11,9 +11,8 @@ interface AppLayoutClientProps {
 }
 
 export function AppLayoutClient({ children, userEmail }: AppLayoutClientProps) {
-  const { profile, setProfile, settings } = useAppStore();
+  const { profile, setProfile, settings, sidebarCollapsed } = useAppStore();
 
-  // Update profile email from auth
   useEffect(() => {
     if (userEmail && profile && profile.email !== userEmail) {
       setProfile({
@@ -25,7 +24,6 @@ export function AppLayoutClient({ children, userEmail }: AppLayoutClientProps) {
     }
   }, [profile, userEmail, setProfile]);
 
-  // Apply dark mode based on settings
   useEffect(() => {
     const root = document.documentElement;
     if (settings.dark_mode) {
@@ -38,17 +36,21 @@ export function AppLayoutClient({ children, userEmail }: AppLayoutClientProps) {
   return (
     <div className="min-h-dvh bg-background">
       <AppSidebar userEmail={userEmail} />
-      <main className="ml-[var(--sidebar-width)] min-h-dvh">
+      <main
+        className="min-h-dvh transition-all duration-300 ease-in-out"
+        style={{
+          marginLeft: sidebarCollapsed
+            ? "var(--sidebar-collapsed-width)"
+            : "var(--sidebar-width)",
+        }}
+      >
         <AnimatePresence mode="wait">
           <motion.div
             key={typeof window !== "undefined" ? window.location.pathname : ""}
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
-            transition={{
-              duration: 0.15,
-              ease: "easeOut",
-            }}
+            transition={{ duration: 0.15, ease: "easeOut" }}
             className="min-h-dvh p-8"
           >
             {children}

@@ -25,15 +25,47 @@ export interface TaskInput {
 // Goal types
 export type GoalColor = "orange" | "blue" | "green" | "purple";
 
+export type GoalCategory =
+  | "health"
+  | "finance"
+  | "career"
+  | "personal"
+  | "skill"
+  | "leisure";
+
+export const GOAL_CATEGORIES: { value: GoalCategory; label: string }[] = [
+  { value: "health", label: "Health & Wellness" },
+  { value: "finance", label: "Finance" },
+  { value: "career", label: "Career" },
+  { value: "personal", label: "Personal" },
+  { value: "skill", label: "Skill" },
+  { value: "leisure", label: "Leisure" },
+];
+
+export type ReminderFrequency = "daily" | "weekly" | "biweekly" | "monthly" | "none";
+
+export const REMINDER_OPTIONS: { value: ReminderFrequency; label: string }[] = [
+  { value: "none", label: "No Reminders" },
+  { value: "daily", label: "Daily Check-in" },
+  { value: "weekly", label: "Weekly Check-in" },
+  { value: "biweekly", label: "Bi-weekly Check-in" },
+  { value: "monthly", label: "Monthly Check-in" },
+];
+
 export interface Goal {
   id: string;
   user_id: string;
   title: string;
   description?: string;
-  target_date: string; // ISO date string
+  target_date: string;
   progress: number; // 0-100
   color: GoalColor;
-  icon?: string; // lucide icon name
+  icon?: string;
+  category?: GoalCategory;
+  target_metric?: string;
+  reminder_frequency?: ReminderFrequency;
+  completed?: boolean;
+  completed_at?: string;
   created_at: string;
   updated_at: string;
 }
@@ -45,6 +77,9 @@ export interface GoalInput {
   progress?: number;
   color: GoalColor;
   icon?: string;
+  category?: GoalCategory;
+  target_metric?: string;
+  reminder_frequency?: ReminderFrequency;
 }
 
 // User settings types

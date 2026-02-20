@@ -86,16 +86,21 @@ function getDemoTasks(): Task[] {
 
 function getDemoGoals(): Goal[] {
   const endOfYear = new Date(new Date().getFullYear(), 11, 31).toISOString().slice(0, 10);
+  const midNextYear = new Date(new Date().getFullYear() + 1, 5, 30).toISOString().slice(0, 10);
+  const augThisYear = new Date(new Date().getFullYear(), 7, 15).toISOString().slice(0, 10);
   
   return [
     {
       id: generateId(),
       user_id: "demo",
       title: "Health & Fitness",
+      description: "To maintain a healthy lifestyle and run a marathon by the end of the year.",
       target_date: endOfYear,
-      progress: 80,
+      progress: 65,
       color: "orange",
       icon: "dumbbell",
+      category: "health",
+      reminder_frequency: "weekly",
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     },
@@ -103,21 +108,27 @@ function getDemoGoals(): Goal[] {
       id: generateId(),
       user_id: "demo",
       title: "Learn Spanish",
-      target_date: endOfYear,
-      progress: 45,
+      target_date: midNextYear,
+      progress: 30,
       color: "blue",
       icon: "languages",
+      category: "skill",
+      reminder_frequency: "weekly",
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     },
     {
       id: generateId(),
       user_id: "demo",
-      title: "Save $10k",
-      target_date: endOfYear,
-      progress: 20,
+      title: "Save $10,000",
+      description: "Build emergency fund and long-term savings.",
+      target_date: augThisYear,
+      progress: 80,
       color: "green",
       icon: "dollar",
+      category: "finance",
+      target_metric: "$10,000",
+      reminder_frequency: "monthly",
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     },
@@ -126,9 +137,12 @@ function getDemoGoals(): Goal[] {
       user_id: "demo",
       title: "Read 24 Books",
       target_date: endOfYear,
-      progress: 60,
+      progress: 50,
       color: "purple",
       icon: "book",
+      category: "personal",
+      target_metric: "24",
+      reminder_frequency: "weekly",
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     },
@@ -144,6 +158,11 @@ function sanitizeString(str: string): string {
 }
 
 interface AppStore {
+  // UI state
+  sidebarCollapsed: boolean;
+  toggleSidebar: () => void;
+  setSidebarCollapsed: (collapsed: boolean) => void;
+
   // User profile
   profile: UserProfile | null;
   setProfile: (profile: UserProfile | null) => void;
@@ -172,6 +191,11 @@ interface AppStore {
 export const useAppStore = create<AppStore>()(
   persist(
     (set, get) => ({
+      // UI state
+      sidebarCollapsed: false,
+      toggleSidebar: () => set((state) => ({ sidebarCollapsed: !state.sidebarCollapsed })),
+      setSidebarCollapsed: (collapsed) => set({ sidebarCollapsed: collapsed }),
+
       // Profile (initialize with demo profile for new users)
       profile: {
         id: "demo",
@@ -335,6 +359,7 @@ export const useAppStore = create<AppStore>()(
         settings: state.settings,
         tasks: state.tasks,
         goals: state.goals,
+        sidebarCollapsed: state.sidebarCollapsed,
       }),
     }
   )

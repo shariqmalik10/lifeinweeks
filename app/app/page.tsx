@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { motion } from "motion/react";
 import { Sunrise, Calendar, Clock, Plane } from "lucide-react";
 import { LifeGrid } from "@/components/life-grid";
 import { BirthDatePicker } from "@/components/birth-date-picker";
@@ -164,7 +165,12 @@ interface StatCardProps {
 
 function StatCard({ icon: Icon, label, value }: StatCardProps) {
   return (
-    <div className="rounded-lg border border-border bg-card p-3">
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, ease: "easeOut" }}
+      className="rounded-lg border border-border bg-card p-3"
+    >
       <div className="flex items-center gap-2 text-muted-foreground">
         <Icon className="size-4" />
         <span className="text-[10px] uppercase tracking-wider">{label}</span>
@@ -172,7 +178,7 @@ function StatCard({ icon: Icon, label, value }: StatCardProps) {
       <div className="mt-1 tabular-nums text-xl font-semibold text-foreground">
         {value}
       </div>
-    </div>
+    </motion.div>
   );
 }
 

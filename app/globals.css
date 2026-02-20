@@ -94,7 +94,8 @@
     --grid-current: 0 72% 51%; /* Red for current week */
     --radius: 0.5rem;
     /* Sidebar */
-    --sidebar-width: 280px;
+    --sidebar-width: 240px;
+    --sidebar-collapsed-width: 72px;
     /* Goal colors */
     --goal-red: 0 72% 51%;
     --goal-blue: 217 91% 60%;
@@ -126,7 +127,8 @@
     --grid-future: 0 0% 94%;
     --grid-future-border: 0 0% 80%;
     --grid-current: 0 72% 51%;
-    --sidebar-width: 280px;
+    --sidebar-width: 240px;
+    --sidebar-collapsed-width: 72px;
     --goal-red: 0 72% 51%;
     --goal-blue: 217 91% 60%;
     --goal-green: 142 71% 45%;

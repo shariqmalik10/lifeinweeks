@@ -1,7 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getDevUser, isDevBypassEnabled } from "@/lib/auth/dev";
-import { AppSidebar } from "@/components/app-sidebar";
 import { AppLayoutClient } from "./app-layout-client";
 
 export default async function AppLayout({

@@ -1,9 +1,11 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import Link from "next/link";
 import { BirthDatePicker } from "@/components/birth-date-picker";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { LogIn, ArrowRight } from "lucide-react";
 
 type TimeUnit = "weeks" | "months" | "years";
 
@@ -201,14 +203,23 @@ export default function Home() {
     <main className="relative z-10 h-screen flex overflow-hidden bg-zinc-950">
       {/* Sidebar - Left */}
       <aside className="w-80 shrink-0 border-r border-zinc-800 p-6 flex flex-col overflow-y-auto">
-        {/* Logo/Title */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-serif text-white leading-tight">
-            Life in
-          </h1>
-          <h1 className="text-3xl font-serif text-red-500 leading-tight italic">
-            Weeks.
-          </h1>
+        {/* Logo/Title + Auth */}
+        <div className="mb-8 flex items-start justify-between">
+          <div>
+            <h1 className="text-3xl font-serif text-white leading-tight">
+              Life in
+            </h1>
+            <h1 className="text-3xl font-serif text-red-500 leading-tight italic">
+              Weeks.
+            </h1>
+          </div>
+          <Link
+            href="/auth/login"
+            className="flex items-center gap-1.5 rounded-lg bg-white px-3 py-1.5 text-xs font-semibold text-black hover:bg-zinc-200 transition-all mt-1"
+          >
+            <LogIn className="size-3.5" />
+            Sign in
+          </Link>
         </div>
 
         {/* Date of Birth */}
@@ -311,6 +322,20 @@ export default function Home() {
               </button>
             ))}
           </div>
+        </div>
+
+        {/* CTA Section */}
+        <div className="mt-6 pt-6 border-t border-zinc-800">
+          <Link
+            href="/app"
+            className="group flex items-center justify-between w-full rounded-xl bg-gradient-to-r from-red-600 to-red-500 px-4 py-3 text-white transition-all hover:from-red-500 hover:to-red-400 active:scale-[0.98]"
+          >
+            <div>
+              <p className="text-sm font-semibold">Try the Demo</p>
+              <p className="text-[10px] text-white/70 mt-0.5">No account required</p>
+            </div>
+            <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
+          </Link>
         </div>
       </aside>
 
