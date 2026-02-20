@@ -16,11 +16,12 @@ export default async function AppLayout({
     redirect("/auth/login");
   }
 
-  const userEmail = typeof claims.email === "string" ? claims.email : undefined;
-  const userId = typeof claims.sub === "string" ? claims.sub : undefined;
+  const c = claims as Record<string, unknown>;
+  const userEmail = typeof c.email === "string" ? c.email : undefined;
+  const userId = typeof c.sub === "string" ? c.sub : typeof c.id === "string" ? c.id : undefined;
 
-  const meta = typeof claims.user_metadata === "object" && claims.user_metadata !== null
-    ? (claims.user_metadata as Record<string, unknown>)
+  const meta = typeof c.user_metadata === "object" && c.user_metadata !== null
+    ? (c.user_metadata as Record<string, unknown>)
     : undefined;
 
   const userMeta = meta

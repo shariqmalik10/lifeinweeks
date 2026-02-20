@@ -213,7 +213,7 @@ export const useAppStore = create<AppStore>()(
             state.goals = [];
           }
         }
-        return state as AppStore;
+        return state as unknown as AppStore;
       },
       partialize: (state) => ({
         profile: state.profile,
