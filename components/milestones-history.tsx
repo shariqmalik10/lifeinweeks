@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import {
   Search,
@@ -52,76 +52,11 @@ interface MilestonesHistoryProps {
   goals: Goal[];
 }
 
-// Demo completed milestones when none exist
-function getDemoCompletedGoals(): Goal[] {
-  const now = new Date();
-  return [
-    {
-      id: "hist-1", user_id: "demo", title: "Run a Half Marathon",
-      target_date: new Date(now.getFullYear() - 1, 9, 12).toISOString().slice(0, 10),
-      progress: 100, color: "orange", icon: "dumbbell", category: "health",
-      completed: true, completed_at: new Date(now.getFullYear() - 1, 9, 12).toISOString(),
-      created_at: new Date(now.getFullYear() - 1, 6, 1).toISOString(),
-      updated_at: new Date(now.getFullYear() - 1, 9, 12).toISOString(),
-    },
-    {
-      id: "hist-2", user_id: "demo", title: "Save $10,000 Fund",
-      target_date: new Date(now.getFullYear() - 1, 8, 15).toISOString().slice(0, 10),
-      progress: 100, color: "green", icon: "dollar", category: "finance",
-      completed: true, completed_at: new Date(now.getFullYear() - 1, 8, 15).toISOString(),
-      created_at: new Date(now.getFullYear() - 2, 0, 1).toISOString(),
-      updated_at: new Date(now.getFullYear() - 1, 8, 15).toISOString(),
-    },
-    {
-      id: "hist-3", user_id: "demo", title: "Learn Basic Spanish",
-      target_date: new Date(now.getFullYear() - 1, 7, 2).toISOString().slice(0, 10),
-      progress: 100, color: "blue", icon: "languages", category: "skill",
-      completed: true, completed_at: new Date(now.getFullYear() - 1, 7, 2).toISOString(),
-      created_at: new Date(now.getFullYear() - 2, 1, 1).toISOString(),
-      updated_at: new Date(now.getFullYear() - 1, 7, 2).toISOString(),
-    },
-    {
-      id: "hist-4", user_id: "demo", title: "Read 12 Books",
-      target_date: new Date(now.getFullYear() - 2, 11, 20).toISOString().slice(0, 10),
-      progress: 100, color: "purple", icon: "book", category: "personal",
-      completed: true, completed_at: new Date(now.getFullYear() - 2, 11, 20).toISOString(),
-      created_at: new Date(now.getFullYear() - 3, 0, 1).toISOString(),
-      updated_at: new Date(now.getFullYear() - 2, 11, 20).toISOString(),
-    },
-    {
-      id: "hist-5", user_id: "demo", title: "Senior Promotion",
-      target_date: new Date(now.getFullYear() - 2, 5, 15).toISOString().slice(0, 10),
-      progress: 100, color: "blue", icon: "briefcase", category: "career",
-      completed: true, completed_at: new Date(now.getFullYear() - 2, 5, 15).toISOString(),
-      created_at: new Date(now.getFullYear() - 4, 5, 1).toISOString(),
-      updated_at: new Date(now.getFullYear() - 2, 5, 15).toISOString(),
-    },
-    {
-      id: "hist-6", user_id: "demo", title: "Visit Japan",
-      target_date: new Date(now.getFullYear() - 2, 3, 10).toISOString().slice(0, 10),
-      progress: 100, color: "purple", icon: "plane", category: "leisure",
-      completed: true, completed_at: new Date(now.getFullYear() - 2, 3, 10).toISOString(),
-      created_at: new Date(now.getFullYear() - 2, 2, 15).toISOString(),
-      updated_at: new Date(now.getFullYear() - 2, 3, 10).toISOString(),
-    },
-    {
-      id: "hist-7", user_id: "demo", title: "Build First App",
-      target_date: new Date(now.getFullYear() - 2, 0, 15).toISOString().slice(0, 10),
-      progress: 100, color: "green", icon: "code", category: "skill",
-      completed: true, completed_at: new Date(now.getFullYear() - 2, 0, 15).toISOString(),
-      created_at: new Date(now.getFullYear() - 2, 0, 1).toISOString(),
-      updated_at: new Date(now.getFullYear() - 2, 0, 15).toISOString(),
-    },
-  ];
-}
-
 export function MilestonesHistory({ goals }: MilestonesHistoryProps) {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<string>("All");
 
-  const allGoals = useMemo(() => {
-    return goals.length > 0 ? goals : getDemoCompletedGoals();
-  }, [goals]);
+  const allGoals = goals;
 
   const filteredGoals = useMemo(() => {
     return allGoals.filter((g) => {
@@ -136,7 +71,6 @@ export function MilestonesHistory({ goals }: MilestonesHistoryProps) {
     const thisYearGoals = allGoals.filter((g) => g.completed_at && new Date(g.completed_at).getFullYear() === thisYear);
     return {
       total: allGoals.length,
-      streak: 12,
       thisYear: thisYearGoals.length,
     };
   }, [allGoals]);
@@ -161,7 +95,6 @@ export function MilestonesHistory({ goals }: MilestonesHistoryProps) {
         <div className="flex gap-3">
           {[
             { label: "Total", value: stats.total },
-            { label: "Streak", value: `${stats.streak} Wks` },
             { label: "This Year", value: stats.thisYear },
           ].map((stat) => (
             <div key={stat.label} className="rounded-lg border border-border bg-card px-4 py-2 text-center min-w-[80px]">

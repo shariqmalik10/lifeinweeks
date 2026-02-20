@@ -1,28 +1,53 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
 import { AppSidebar } from "@/components/app-sidebar";
 import { useAppStore } from "@/lib/store";
 
+interface UserMeta {
+  fullName?: string;
+  avatarUrl?: string;
+}
+
 interface AppLayoutClientProps {
   children: React.ReactNode;
   userEmail?: string;
+  userId?: string;
+  userMeta?: UserMeta;
 }
 
-export function AppLayoutClient({ children, userEmail }: AppLayoutClientProps) {
+export function AppLayoutClient({ children, userEmail, userId, userMeta }: AppLayoutClientProps) {
   const { profile, setProfile, settings, sidebarCollapsed } = useAppStore();
+  const pathname = usePathname();
+  const initialized = useRef(false);
 
   useEffect(() => {
-    if (userEmail && profile && profile.email !== userEmail) {
-      setProfile({
-        ...profile,
-        id: userEmail,
-        email: userEmail,
-        updated_at: new Date().toISOString(),
-      });
+    if (!userEmail || initialized.current) return;
+
+    const needsInit = !profile || profile.id === "demo" || profile.email !== userEmail;
+    if (!needsInit) {
+      initialized.current = true;
+      return;
     }
-  }, [profile, userEmail, setProfile]);
+
+    const nameParts = userMeta?.fullName?.split(" ") ?? [];
+    const firstName = nameParts[0] || undefined;
+    const lastName = nameParts.slice(1).join(" ") || undefined;
+
+    setProfile({
+      id: userId || userEmail,
+      email: userEmail,
+      first_name: profile?.first_name && profile.id !== "demo" ? profile.first_name : firstName,
+      last_name: profile?.last_name && profile.id !== "demo" ? profile.last_name : lastName,
+      avatar_url: profile?.avatar_url || userMeta?.avatarUrl,
+      birth_date: profile?.birth_date && profile.id !== "demo" ? profile.birth_date : undefined,
+      created_at: profile?.created_at || new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    });
+    initialized.current = true;
+  }, [userEmail, userId, userMeta, profile, setProfile]);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -46,7 +71,7 @@ export function AppLayoutClient({ children, userEmail }: AppLayoutClientProps) {
       >
         <AnimatePresence mode="wait">
           <motion.div
-            key={typeof window !== "undefined" ? window.location.pathname : ""}
+            key={pathname}
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}

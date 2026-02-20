@@ -4,149 +4,8 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { Task, Goal, UserProfile, UserSettings, TaskInput, GoalInput } from "./types";
 
-// Generate unique IDs
 function generateId(): string {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
-}
-
-// Demo data for new users
-function getDemoTasks(): Task[] {
-  const today = new Date();
-  const formatDate = (d: Date) => d.toISOString().slice(0, 10);
-  
-  return [
-    {
-      id: generateId(),
-      user_id: "demo",
-      title: "Morning Reflection",
-      date: formatDate(today),
-      time: "09:00",
-      priority: "high",
-      completed: true,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    },
-    {
-      id: generateId(),
-      user_id: "demo",
-      title: "Update Project Timeline",
-      date: formatDate(today),
-      time: "09:00",
-      priority: "high",
-      completed: true,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    },
-    {
-      id: generateId(),
-      user_id: "demo",
-      title: "Review Client Assets",
-      date: formatDate(today),
-      time: "09:00",
-      priority: "medium",
-      completed: false,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    },
-    {
-      id: generateId(),
-      user_id: "demo",
-      title: "Evening Run (5km)",
-      date: formatDate(today),
-      time: "09:00",
-      priority: "low",
-      completed: false,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    },
-    {
-      id: generateId(),
-      user_id: "demo",
-      title: "Weekly Planning",
-      date: formatDate(new Date(today.getTime() + 24 * 60 * 60 * 1000)),
-      time: "09:00",
-      priority: "medium",
-      completed: false,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    },
-    {
-      id: generateId(),
-      user_id: "demo",
-      title: "Team Sync",
-      date: formatDate(new Date(today.getTime() + 24 * 60 * 60 * 1000)),
-      time: "09:00",
-      priority: "high",
-      completed: false,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    },
-  ];
-}
-
-function getDemoGoals(): Goal[] {
-  const endOfYear = new Date(new Date().getFullYear(), 11, 31).toISOString().slice(0, 10);
-  const midNextYear = new Date(new Date().getFullYear() + 1, 5, 30).toISOString().slice(0, 10);
-  const augThisYear = new Date(new Date().getFullYear(), 7, 15).toISOString().slice(0, 10);
-  
-  return [
-    {
-      id: generateId(),
-      user_id: "demo",
-      title: "Health & Fitness",
-      description: "To maintain a healthy lifestyle and run a marathon by the end of the year.",
-      target_date: endOfYear,
-      progress: 65,
-      color: "orange",
-      icon: "dumbbell",
-      category: "health",
-      reminder_frequency: "weekly",
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    },
-    {
-      id: generateId(),
-      user_id: "demo",
-      title: "Learn Spanish",
-      target_date: midNextYear,
-      progress: 30,
-      color: "blue",
-      icon: "languages",
-      category: "skill",
-      reminder_frequency: "weekly",
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    },
-    {
-      id: generateId(),
-      user_id: "demo",
-      title: "Save $10,000",
-      description: "Build emergency fund and long-term savings.",
-      target_date: augThisYear,
-      progress: 80,
-      color: "green",
-      icon: "dollar",
-      category: "finance",
-      target_metric: "$10,000",
-      reminder_frequency: "monthly",
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    },
-    {
-      id: generateId(),
-      user_id: "demo",
-      title: "Read 24 Books",
-      target_date: endOfYear,
-      progress: 50,
-      color: "purple",
-      icon: "book",
-      category: "personal",
-      target_metric: "24",
-      reminder_frequency: "weekly",
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    },
-  ];
 }
 
 // Sanitize string input to prevent XSS
@@ -196,16 +55,7 @@ export const useAppStore = create<AppStore>()(
       toggleSidebar: () => set((state) => ({ sidebarCollapsed: !state.sidebarCollapsed })),
       setSidebarCollapsed: (collapsed) => set({ sidebarCollapsed: collapsed }),
 
-      // Profile (initialize with demo profile for new users)
-      profile: {
-        id: "demo",
-        email: "user@example.com",
-        first_name: "Rustem",
-        last_name: "Urazmetov",
-        birth_date: new Date(new Date().getFullYear() - 48, 0, 1).toISOString().slice(0, 10),
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      },
+      profile: null,
       setProfile: (profile) => set({ profile }),
       updateProfile: (updates) =>
         set((state) => ({
@@ -243,8 +93,7 @@ export const useAppStore = create<AppStore>()(
           },
         })),
 
-      // Tasks (initialize with demo data)
-      tasks: getDemoTasks(),
+      tasks: [],
       addTask: (input) => {
         const now = new Date().toISOString();
         const task: Task = {
@@ -309,8 +158,7 @@ export const useAppStore = create<AppStore>()(
           .slice(0, limit);
       },
 
-      // Goals (initialize with demo data)
-      goals: getDemoGoals(),
+      goals: [],
       addGoal: (input) => {
         const now = new Date().toISOString();
         const goal: Goal = {
@@ -354,6 +202,19 @@ export const useAppStore = create<AppStore>()(
     }),
     {
       name: "lifeinweeks-storage",
+      version: 2,
+      migrate: (persisted: unknown, version: number) => {
+        const state = persisted as Record<string, unknown>;
+        if (version < 2) {
+          const profile = state.profile as { id?: string } | null;
+          if (profile?.id === "demo") {
+            state.profile = null;
+            state.tasks = [];
+            state.goals = [];
+          }
+        }
+        return state as AppStore;
+      },
       partialize: (state) => ({
         profile: state.profile,
         settings: state.settings,
