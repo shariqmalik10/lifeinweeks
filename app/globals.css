@@ -43,7 +43,7 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
 
-  --font-family-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-family-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-family-serif: var(--font-playfair-serif), ui-serif, Georgia, serif;
 }
 
@@ -66,70 +66,69 @@
 }
 
 @layer base {
-  /* Dark mode - primary theme matching the landing page */
+  /* Obsidian & Crimson (Dark) - default theme */
   :root {
-    --background: 0 0% 7%; /* Near black #121212 */
-    --foreground: 0 0% 95%; /* Off white #f2f2f2 */
-    --card: 0 0% 10%; /* Dark card #1a1a1a */
+    --background: 0 0% 5%; /* #0D0D0D */
+    --foreground: 0 0% 95%;
+    --card: 0 0% 10%; /* #1A1A1A */
     --card-foreground: 0 0% 95%;
     --popover: 0 0% 10%;
     --popover-foreground: 0 0% 95%;
-    --primary: 0 72% 51%; /* Red #dc2626 - main accent matching landing */
+    --primary: 0 100% 65%; /* #FF4D4D Vibrant Crimson */
     --primary-foreground: 0 0% 100%;
-    --secondary: 0 0% 14%; /* Dark secondary #242424 */
+    --secondary: 0 0% 14%;
     --secondary-foreground: 0 0% 95%;
     --muted: 0 0% 14%;
-    --muted-foreground: 0 0% 55%; /* Gray text */
-    --accent: 0 72% 51%; /* Red */
+    --muted-foreground: 0 0% 55%;
+    --accent: 0 100% 65%;
     --accent-foreground: 0 0% 100%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --border: 0 0% 18%; /* Subtle border #2e2e2e */
+    --border: 0 0% 18%;
     --input: 0 0% 18%;
-    --ring: 0 72% 51%;
-    /* Grid specific colors - RED for past/current */
-    --grid-past: 0 72% 51%; /* Red for lived weeks */
-    --grid-future: 0 0% 14%; /* Dark for future */
+    --ring: 0 100% 65%;
+    --grid-past: 0 100% 65%;
+    --grid-future: 0 0% 14%;
     --grid-future-border: 0 0% 25%;
-    --grid-current: 0 72% 51%; /* Red for current week */
+    --grid-current: 0 100% 65%;
     --radius: 0.5rem;
-    /* Sidebar */
-    --sidebar-width: 240px;
+    --sidebar-width: 200px;
     --sidebar-collapsed-width: 72px;
-    /* Goal colors */
-    --goal-red: 0 72% 51%;
+    --context-panel-width: 340px;
+    --goal-red: 0 100% 65%;
     --goal-blue: 217 91% 60%;
     --goal-green: 142 71% 45%;
     --goal-purple: 270 70% 60%;
   }
-  /* Light mode - optional, for accessibility */
+  /* Snow & Ruby (Light) */
   :root[data-theme="light"] {
-    --background: 0 0% 98%;
+    --background: 0 0% 100%; /* #FFFFFF */
     --foreground: 0 0% 10%;
-    --card: 0 0% 100%;
+    --card: 0 0% 96%; /* #F5F5F5 */
     --card-foreground: 0 0% 10%;
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 10%;
-    --primary: 0 72% 51%;
+    --primary: 0 65% 51%; /* #D32F2F Deep Ruby */
     --primary-foreground: 0 0% 100%;
     --secondary: 0 0% 94%;
     --secondary-foreground: 0 0% 10%;
     --muted: 0 0% 94%;
-    --muted-foreground: 0 0% 45%;
-    --accent: 0 72% 51%;
+    --muted-foreground: 215 16% 47%; /* Slate-500 */
+    --accent: 0 65% 51%;
     --accent-foreground: 0 0% 100%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    --border: 0 0% 88%;
-    --input: 0 0% 88%;
-    --ring: 0 72% 51%;
-    --grid-past: 0 72% 51%;
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 0 65% 51%;
+    --grid-past: 0 65% 51%;
     --grid-future: 0 0% 94%;
     --grid-future-border: 0 0% 80%;
-    --grid-current: 0 72% 51%;
-    --sidebar-width: 240px;
+    --grid-current: 0 65% 51%;
+    --sidebar-width: 200px;
     --sidebar-collapsed-width: 72px;
-    --goal-red: 0 72% 51%;
+    --context-panel-width: 340px;
+    --goal-red: 0 65% 51%;
     --goal-blue: 217 91% 60%;
     --goal-green: 142 71% 45%;
     --goal-purple: 270 70% 60%;

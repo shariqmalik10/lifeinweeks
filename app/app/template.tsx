@@ -23,10 +23,10 @@ export default function AppTemplate({
         animate={{ opacity: 1, y: 0 }}
         exit={reduceMotion ? { opacity: 1 } : { opacity: 0, y: -8 }}
         transition={{ duration: 0.16, ease: "easeOut" }}
+        className="min-h-dvh"
       >
         {children}
       </motion.div>
     </AnimatePresence>
   );
 }
-

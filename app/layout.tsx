@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
 
@@ -13,8 +13,8 @@ export const metadata: Metadata = {
   description: "A high-fidelity visualization of your mortality. Memento Mori.",
 };
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const inter = Inter({
+  variable: "--font-inter",
   display: "swap",
   subsets: ["latin"],
 });
@@ -26,7 +26,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${geistMono.className} antialiased min-h-screen bg-zinc-950`}>
+      <body className={`${inter.variable} ${inter.className} antialiased min-h-screen bg-background`}>
         <Providers>
           {children}
         </Providers>

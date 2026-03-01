@@ -2,8 +2,8 @@
 
 import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
-import { motion, AnimatePresence } from "motion/react";
 import { AppSidebar } from "@/components/app-sidebar";
+import { MobileBottomNav } from "@/components/mobile-bottom-nav";
 import { useAppStore } from "@/lib/store";
 
 interface UserMeta {
@@ -19,7 +19,7 @@ interface AppLayoutClientProps {
 }
 
 export function AppLayoutClient({ children, userEmail, userId, userMeta }: AppLayoutClientProps) {
-  const { profile, setProfile, settings, sidebarCollapsed } = useAppStore();
+  const { profile, setProfile, settings } = useAppStore();
   const pathname = usePathname();
   const initialized = useRef(false);
 
@@ -61,27 +61,15 @@ export function AppLayoutClient({ children, userEmail, userId, userMeta }: AppLa
   return (
     <div className="min-h-dvh bg-background">
       <AppSidebar userEmail={userEmail} />
+
       <main
-        className="min-h-dvh transition-all duration-300 ease-in-out"
-        style={{
-          marginLeft: sidebarCollapsed
-            ? "var(--sidebar-collapsed-width)"
-            : "var(--sidebar-width)",
-        }}
+        className="min-h-dvh transition-all duration-300 ease-in-out max-md:ml-0 max-md:pb-16"
+        style={{ marginLeft: "var(--sidebar-width)" }}
       >
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={pathname}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.15, ease: "easeOut" }}
-            className="min-h-dvh p-8"
-          >
-            {children}
-          </motion.div>
-        </AnimatePresence>
+        {children}
       </main>
+
+      <MobileBottomNav />
     </div>
   );
 }

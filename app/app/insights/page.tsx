@@ -119,7 +119,7 @@ export default function InsightsPage() {
   const maxDailyTasks = Math.max(1, ...analytics.dailyBreakdown.map((d) => d.total));
 
   return (
-    <div className="mx-auto max-w-6xl">
+    <div className="mx-auto max-w-6xl p-6">
       {/* Header */}
       <div className="flex items-center gap-3 mb-8">
         <BarChart3 className="size-6 text-primary" />

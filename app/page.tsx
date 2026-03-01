@@ -200,22 +200,22 @@ export default function Home() {
   }, [stats.weeksLived, stats.weeksRemaining]);
 
   return (
-    <main className="relative z-10 h-screen flex overflow-hidden bg-zinc-950">
+    <main className="relative z-10 h-screen flex overflow-hidden bg-background">
       {/* Sidebar - Left */}
-      <aside className="w-80 shrink-0 border-r border-zinc-800 p-6 flex flex-col overflow-y-auto">
+      <aside className="w-80 shrink-0 border-r border-border p-6 flex flex-col overflow-y-auto">
         {/* Logo/Title + Auth */}
         <div className="mb-8 flex items-start justify-between">
           <div>
-            <h1 className="text-3xl font-serif text-white leading-tight">
+            <h1 className="text-3xl font-serif text-foreground leading-tight">
               Life in
             </h1>
-            <h1 className="text-3xl font-serif text-red-500 leading-tight italic">
+            <h1 className="text-3xl font-serif text-primary leading-tight italic">
               Weeks.
             </h1>
           </div>
           <Link
             href="/auth/login"
-            className="flex items-center gap-1.5 rounded-lg bg-white px-3 py-1.5 text-xs font-semibold text-black hover:bg-zinc-200 transition-all mt-1"
+            className="flex items-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground hover:bg-primary/90 transition-all mt-1"
           >
             <LogIn className="size-3.5" />
             Sign in
@@ -224,7 +224,7 @@ export default function Home() {
 
         {/* Date of Birth */}
         <div className="mb-8">
-          <label className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider block mb-2">
+          <label className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider block mb-2">
             Date of Birth
           </label>
           <BirthDatePicker
@@ -235,18 +235,18 @@ export default function Home() {
 
         {/* Hero Stat */}
         <div className="mb-2">
-          <p className="text-7xl font-bold text-white tracking-tight">
+          <p className="text-7xl font-bold text-primary tracking-tight tabular-nums">
             {Math.round(stats.percentComplete)}%
           </p>
-          <div className="w-16 h-1 bg-red-500 mt-3 mb-3" />
-          <p className="text-sm text-zinc-500">
+          <div className="w-16 h-1 bg-primary mt-3 mb-3" />
+          <p className="text-sm text-muted-foreground">
             of your 90 years is gone.
           </p>
         </div>
 
         {/* Insight Quote */}
-        <div className="my-8 border-l-2 border-red-500 pl-4">
-          <p className="text-sm text-zinc-400 italic leading-relaxed">
+        <div className="my-8 border-l-2 border-primary pl-4">
+          <p className="text-sm text-muted-foreground italic leading-relaxed">
             {insight}
           </p>
         </div>
@@ -254,59 +254,59 @@ export default function Home() {
         {/* Life Currency Stats */}
         <div className="grid grid-cols-2 gap-3 mt-auto">
           {/* Sunsets */}
-          <div className="bg-gradient-to-br from-orange-950/40 to-zinc-900 rounded-xl p-4 border border-orange-900/30">
+          <div className="rounded-xl p-4 border border-border bg-card">
             <div className="flex items-center gap-2 mb-2">
-              <svg className="w-4 h-4 text-orange-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg className="w-4 h-4 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <circle cx="12" cy="12" r="4"/>
                 <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
               </svg>
-              <span className="text-[10px] font-medium text-orange-400/80 uppercase tracking-wider">Sunsets</span>
+              <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Sunsets</span>
             </div>
-            <p className="font-mono text-2xl text-white tracking-tight">{stats.sunsetsRemaining.toLocaleString()}</p>
+            <p className="text-2xl font-bold text-foreground tabular-nums tracking-tight">{stats.sunsetsRemaining.toLocaleString()}</p>
           </div>
 
           {/* Weekends */}
-          <div className="bg-gradient-to-br from-blue-950/40 to-zinc-900 rounded-xl p-4 border border-blue-900/30">
+          <div className="rounded-xl p-4 border border-border bg-card">
             <div className="flex items-center gap-2 mb-2">
-              <svg className="w-4 h-4 text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg className="w-4 h-4 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <rect x="3" y="4" width="18" height="18" rx="2"/>
                 <path d="M16 2v4M8 2v4M3 10h18"/>
               </svg>
-              <span className="text-[10px] font-medium text-blue-400/80 uppercase tracking-wider">Weekends</span>
+              <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Weekends</span>
             </div>
-            <p className="font-mono text-2xl text-white tracking-tight">{stats.weekendsRemaining.toLocaleString()}</p>
+            <p className="text-2xl font-bold text-foreground tabular-nums tracking-tight">{stats.weekendsRemaining.toLocaleString()}</p>
           </div>
 
           {/* Awake Hours */}
-          <div className="bg-gradient-to-br from-emerald-950/40 to-zinc-900 rounded-xl p-4 border border-emerald-900/30">
+          <div className="rounded-xl p-4 border border-border bg-card">
             <div className="flex items-center gap-2 mb-2">
-              <svg className="w-4 h-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg className="w-4 h-4 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <circle cx="12" cy="12" r="10"/>
                 <path d="M12 6v6l4 2"/>
               </svg>
-              <span className="text-[10px] font-medium text-emerald-400/80 uppercase tracking-wider">Awake Hrs</span>
+              <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Awake Hrs</span>
             </div>
-            <p className="font-mono text-2xl text-white tracking-tight">{stats.awakeHours.toLocaleString()}</p>
+            <p className="text-2xl font-bold text-foreground tabular-nums tracking-tight">{stats.awakeHours.toLocaleString()}</p>
           </div>
 
           {/* Trips */}
-          <div className="bg-gradient-to-br from-purple-950/40 to-zinc-900 rounded-xl p-4 border border-purple-900/30">
+          <div className="rounded-xl p-4 border border-border bg-card">
             <div className="flex items-center gap-2 mb-2">
-              <svg className="w-4 h-4 text-purple-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg className="w-4 h-4 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>
               </svg>
-              <span className="text-[10px] font-medium text-purple-400/80 uppercase tracking-wider">Trips</span>
+              <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Trips</span>
             </div>
-            <p className="font-mono text-2xl text-white tracking-tight">{stats.tripsRemaining.toLocaleString()}</p>
+            <p className="text-2xl font-bold text-foreground tabular-nums tracking-tight">{stats.tripsRemaining.toLocaleString()}</p>
           </div>
         </div>
 
         {/* Granularity Toggle */}
         <div className="mt-6">
-          <label className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider block mb-3">
+          <label className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider block mb-3">
             Granularity
           </label>
-          <div className="flex bg-zinc-900 rounded-lg p-1">
+          <div className="flex bg-secondary rounded-lg p-1">
             {(["years", "months", "weeks"] as TimeUnit[]).map((unit) => (
               <button
                 key={unit}
@@ -314,8 +314,8 @@ export default function Home() {
                 className={cn(
                   "flex-1 py-2 text-xs font-medium rounded-md transition-all uppercase tracking-wide",
                   timeUnit === unit
-                    ? "bg-zinc-700 text-white"
-                    : "text-zinc-500 hover:text-zinc-300"
+                    ? "bg-foreground text-background"
+                    : "text-muted-foreground hover:text-foreground"
                 )}
               >
                 {unit}
@@ -325,14 +325,14 @@ export default function Home() {
         </div>
 
         {/* CTA Section */}
-        <div className="mt-6 pt-6 border-t border-zinc-800">
+        <div className="mt-6 pt-6 border-t border-border">
           <Link
             href="/app"
-            className="group flex items-center justify-between w-full rounded-xl bg-gradient-to-r from-red-600 to-red-500 px-4 py-3 text-white transition-all hover:from-red-500 hover:to-red-400 active:scale-[0.98]"
+            className="group flex items-center justify-between w-full rounded-xl bg-primary px-4 py-3 text-primary-foreground transition-all hover:bg-primary/90 active:scale-[0.98]"
           >
             <div>
               <p className="text-sm font-semibold">Try the Demo</p>
-              <p className="text-[10px] text-white/70 mt-0.5">No account required</p>
+              <p className="text-[10px] text-primary-foreground/70 mt-0.5">No account required</p>
             </div>
             <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
           </Link>
@@ -349,7 +349,7 @@ export default function Home() {
               {gridData.rows.map((row, idx) => (
                 <div key={row.age} className="flex-1 flex items-center justify-end min-h-0">
                   {row.age % 5 === 0 && (
-                    <span className="text-[10px] text-zinc-600 font-mono leading-none">
+                    <span className="text-[10px] text-muted-foreground font-mono leading-none">
                       {row.age}
                     </span>
                   )}
@@ -362,7 +362,7 @@ export default function Home() {
               {gridData.rows.map((row) => (
                 <div key={row.age} className="flex-1 flex items-center justify-end min-h-0">
                   {row.age % 10 === 0 && (
-                    <span className="text-[10px] text-zinc-600 font-mono leading-none">
+                    <span className="text-[10px] text-muted-foreground font-mono leading-none">
                       {row.age}
                     </span>
                   )}
@@ -378,7 +378,7 @@ export default function Home() {
                 {Array.from({ length: 52 }, (_, i) => i + 1).map((week) => (
                   <div key={week} className="flex-1 min-w-0 flex justify-center">
                     {week === 1 || week % 5 === 0 ? (
-                      <span className="text-[10px] text-zinc-600 font-mono leading-none">
+                      <span className="text-[10px] text-muted-foreground font-mono leading-none">
                         {week}
                       </span>
                     ) : null}
@@ -390,7 +390,7 @@ export default function Home() {
               <div className="flex mb-1 shrink-0 h-4">
                 {Array.from({ length: 12 }, (_, i) => i + 1).map((month) => (
                   <div key={month} className="flex-1 min-w-0 flex justify-center">
-                    <span className="text-[10px] text-zinc-600 font-mono leading-none">
+                    <span className="text-[10px] text-muted-foreground font-mono leading-none">
                       {month}
                     </span>
                   </div>
@@ -417,7 +417,7 @@ export default function Home() {
       {/* Waitlist Popup - Bottom Right */}
       {showWaitlist && (
         <div 
-          className="fixed bottom-6 right-6 z-50 w-80 bg-zinc-900 border border-zinc-700 rounded-xl shadow-2xl overflow-hidden"
+          className="fixed bottom-6 right-6 z-50 w-80 bg-card border border-border rounded-xl shadow-2xl overflow-hidden"
           style={{
             animation: "slideInRight 0.4s cubic-bezier(0.16, 1, 0.3, 1)"
           }}
@@ -425,7 +425,7 @@ export default function Home() {
           {/* Close Button */}
           <button
             onClick={handleSkipToDemo}
-            className="absolute top-3 right-3 text-zinc-500 hover:text-white transition-colors z-10"
+            className="absolute top-3 right-3 text-muted-foreground hover:text-foreground transition-colors z-10"
             aria-label="Close"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -436,13 +436,13 @@ export default function Home() {
 
           {/* Header */}
           <div className="p-4 pb-3">
-            <span className="inline-block px-2 py-0.5 text-[10px] font-medium text-emerald-400 border border-zinc-600 rounded-full uppercase tracking-wider mb-3">
+            <span className="inline-block px-2 py-0.5 text-[10px] font-medium text-emerald-400 border border-border rounded-full uppercase tracking-wider mb-3">
               Beta Access
             </span>
-            <h3 className="text-xl font-serif text-white mb-1">
+            <h3 className="text-xl font-serif text-foreground mb-1">
               Life in Weeks
             </h3>
-            <p className="text-xs text-zinc-400">
+            <p className="text-xs text-muted-foreground">
               Get early access to the full experience.
             </p>
           </div>
@@ -452,8 +452,8 @@ export default function Home() {
             {submitSuccess ? (
               <div className="text-center py-4">
                 <div className="text-emerald-400 text-2xl mb-2">✓</div>
-                <p className="text-sm text-white font-medium">You&apos;re on the list!</p>
-                <p className="text-xs text-zinc-400 mt-1">Check your email for confirmation.</p>
+                <p className="text-sm text-foreground font-medium">You&apos;re on the list!</p>
+                <p className="text-xs text-muted-foreground mt-1">Check your email for confirmation.</p>
               </div>
             ) : (
               <form onSubmit={handleWaitlistSubmit} className="space-y-2">
@@ -462,7 +462,7 @@ export default function Home() {
                   placeholder="Enter your email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full h-10 text-sm bg-zinc-800 border-zinc-600 text-white placeholder:text-zinc-500 font-mono"
+                  className="w-full h-10 text-sm bg-background border-border text-foreground placeholder:text-muted-foreground"
                   required
                 />
                 {submitError && (
@@ -471,7 +471,7 @@ export default function Home() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full h-10 bg-white text-black font-semibold text-xs uppercase tracking-wider rounded-md hover:bg-zinc-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full h-10 bg-primary text-primary-foreground font-semibold text-xs uppercase tracking-wider rounded-md hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? "Joining..." : "Join Waitlist"}
                 </button>
@@ -480,8 +480,8 @@ export default function Home() {
           </div>
 
           {/* Footer */}
-          <div className="px-4 py-2 bg-zinc-950/50 border-t border-zinc-800">
-            <p className="text-[10px] text-zinc-500 text-center italic">
+          <div className="px-4 py-2 bg-background/50 border-t border-border">
+            <p className="text-[10px] text-muted-foreground text-center italic">
               Memento Mori
             </p>
           </div>
@@ -516,9 +516,9 @@ function YearsGrid({ decades }: { decades: Array<{ decade: number; years: Array<
               key={year.age}
               className={cn(
                 "w-10 h-10 cursor-pointer",
-                year.status === "past" && "bg-red-500",
-                year.status === "current" && "bg-red-400",
-                year.status === "future" && "bg-transparent border-2 border-zinc-700 hover:border-zinc-500"
+                year.status === "past" && "bg-primary",
+                year.status === "current" && "bg-primary/80",
+                year.status === "future" && "bg-transparent border-2 border-border hover:border-muted-foreground"
               )}
               title={`Age ${year.age}`}
             />
@@ -539,11 +539,10 @@ function MonthsGrid({ rows }: { rows: Array<{ age: number; months: Array<{ month
             <div
               key={month.month}
               className={cn(
-                "flex-1 min-w-0 rounded-full cursor-pointer"
-                ,
-                month.status === "past" && "bg-red-500",
-                month.status === "current" && "bg-red-400",
-                month.status === "future" && "bg-transparent border border-zinc-700 hover:border-zinc-500"
+                "flex-1 min-w-0 rounded-sm cursor-pointer",
+                month.status === "past" && "bg-primary",
+                month.status === "current" && "bg-primary/80",
+                month.status === "future" && "bg-transparent border border-border hover:border-muted-foreground"
               )}
               title={`Age ${row.age}, Month ${month.month + 1}`}
             />
@@ -564,11 +563,10 @@ function WeeksGrid({ rows }: { rows: Array<{ age: number; weeks: Array<{ week: n
             <div
               key={week.week}
               className={cn(
-                "flex-1 min-w-0 cursor-pointer bg-transparent border"
-                ,
-                week.status === "past" && "bg-red-500",
-                week.status === "current" && "bg-red-400",
-                week.status === "future"
+                "flex-1 min-w-0 cursor-pointer",
+                week.status === "past" && "bg-primary",
+                week.status === "current" && "bg-primary/80",
+                week.status === "future" && "bg-transparent border border-border/50"
               )}
               title={`Age ${row.age}, Week ${week.week + 1}`}
             />

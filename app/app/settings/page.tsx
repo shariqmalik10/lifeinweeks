@@ -92,7 +92,7 @@ export default function SettingsPage() {
       : email?.[0]?.toUpperCase() || "U";
 
   return (
-    <div className="mx-auto max-w-2xl">
+    <div className="mx-auto max-w-2xl p-6">
       {/* Header */}
       <div>
         <h1 className="text-balance text-3xl font-semibold italic text-foreground">
